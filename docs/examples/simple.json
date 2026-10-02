@@ -1,0 +1,32 @@
+{
+  "id": "simple-service",
+  "name": "Simple Service",
+  "simulation": { "duration": 60, "seed": 42 },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Arrivals",
+      "position": { "x": 0, "y": 0 },
+      "config": { "distribution": "constant", "mean_interarrival_time": 10, "max_entities": 6 }
+    },
+    {
+      "id": "service",
+      "type": "process",
+      "name": "Service",
+      "position": { "x": 240, "y": 0 },
+      "config": { "resource_count": 1, "service_distribution": "constant", "mean_service_time": 2 }
+    },
+    {
+      "id": "exit",
+      "type": "sink",
+      "name": "Exit",
+      "position": { "x": 480, "y": 0 },
+      "config": {}
+    }
+  ],
+  "edges": [
+    { "id": "e-arrivals-service", "source": "arrivals", "target": "service" },
+    { "id": "e-service-exit", "source": "service", "target": "exit" }
+  ]
+}

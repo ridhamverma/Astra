@@ -1,0 +1,162 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+body,
+input,
+button,
+select,
+textarea {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.astra-ai-panel { margin: 24px auto; max-width: 900px; padding: 28px; background: white; border: 1px solid #e2e8f0; border-radius: 16px; overflow-y: auto; max-height: calc(100vh - 230px); }
+.astra-ai-panel h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.astra-ai-panel h3 { font-size: 20px; font-weight: 650; margin-bottom: 8px; }
+.astra-ai-panel h4 { font-weight: 650; margin: 18px 0 8px; }
+.astra-ai-panel p, .astra-ai-panel li { color: #475569; font-size: 14px; }
+.astra-ai-panel ul { padding-left: 20px; list-style: disc; }
+.astra-property-field textarea, .astra-property-field select { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: white; color: #0f172a; }
+.astra-ai-draft { margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+.astra-ai-node { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin: 8px 0; }
+.astra-ai-node dl div { display: flex; justify-content: space-between; gap: 20px; font-size: 13px; margin-top: 4px; }
+.astra-ai-review { display: flex; align-items: center; gap: 10px; margin: 20px 0; font-size: 14px; }
+
+.astra-ai-analysis { margin: 24px 0; border: 1px solid #c7d2fe; border-radius: 12px; padding: 22px; background: #f8faff; }
+.astra-ai-analysis-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.astra-ai-analysis h3 { font-size: 20px; font-weight: 650; margin: 4px 0 8px; color: #312e81; }
+.astra-ai-analysis p { font-size: 14px; color: #475569; line-height: 1.6; }
+.astra-ai-explanation article { padding: 16px 0; border-top: 1px solid #dbe3f1; }
+.astra-ai-explanation details { font-size: 12px; margin-top: 10px; color: #64748b; }
+.astra-ai-explanation summary { cursor: pointer; color: #4f46e5; }
+.astra-ai-explanation dl div { display: flex; justify-content: space-between; gap: 20px; padding: 4px 0; }
+.astra-ai-explanation small { display: block; margin-top: 8px; overflow-wrap: anywhere; }
+@media (max-width: 700px) { .astra-ai-analysis-heading { flex-direction: column; } }
+
+.astra-optimization { padding: 28px; max-height: calc(100vh - 200px); overflow-y: auto; background: #f7f9fd; }
+.astra-optimization-form { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 12px 20px; padding: 22px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; }
+.astra-optimization-form .astra-property-field { margin: 0; }
+.astra-optimization-cost, .astra-optimization-form > p { grid-column: 1 / -1; font-size: 14px; }
+.astra-optimization-form > button { justify-self: start; }
+.astra-optimization-results { margin-top: 24px; font-size: 14px; color: #475569; }
+.astra-optimization-results h3 { font-size: 18px; font-weight: 650; margin: 10px 0; color: #0f172a; }
+.astra-optimization-results p { line-height: 1.6; margin: 8px 0; }
+.astra-optimization-recommendation { padding: 20px; margin: 18px 0; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 12px; }
+.astra-optimization-chart { background: white; padding: 20px; margin: 20px 0; border: 1px solid #e2e8f0; border-radius: 12px; }
+.astra-optimization-results summary { cursor: pointer; color: #4f46e5; }
+.astra-optimization-results details ul { list-style: disc; padding-left: 22px; margin: 8px 0; }
+@media (max-width: 900px) { .astra-optimization-form { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .astra-optimization-form { grid-template-columns: 1fr; } .astra-optimization { padding: 16px; } }
+
+@theme inline {
+  --font-heading: var(--font-display);
+  --font-sans: var(--font-sans);
+  --color-sidebar-ring: var(--ui-sidebar-ring);
+  --color-sidebar-border: var(--ui-sidebar-border);
+  --color-sidebar-accent-foreground: var(--ui-sidebar-accent-foreground);
+  --color-sidebar-accent: var(--ui-sidebar-accent);
+  --color-sidebar-primary-foreground: var(--ui-sidebar-primary-foreground);
+  --color-sidebar-primary: var(--ui-sidebar-primary);
+  --color-sidebar-foreground: var(--ui-sidebar-foreground);
+  --color-sidebar: var(--ui-sidebar);
+  --color-chart-5: var(--ui-chart-5);
+  --color-chart-4: var(--ui-chart-4);
+  --color-chart-3: var(--ui-chart-3);
+  --color-chart-2: var(--ui-chart-2);
+  --color-chart-1: var(--ui-chart-1);
+  --color-ring: var(--ui-ring);
+  --color-input: var(--ui-input);
+  --color-border: var(--ui-border);
+  --color-destructive: var(--ui-destructive);
+  --color-accent-foreground: var(--ui-accent-foreground);
+  --color-accent: var(--ui-accent);
+  --color-muted-foreground: var(--ui-muted-foreground);
+  --color-muted: var(--ui-muted);
+  --color-secondary-foreground: var(--ui-secondary-foreground);
+  --color-secondary: var(--ui-secondary);
+  --color-primary-foreground: var(--ui-primary-foreground);
+  --color-primary: var(--ui-primary);
+  --color-popover-foreground: var(--ui-popover-foreground);
+  --color-popover: var(--ui-popover);
+  --color-card-foreground: var(--ui-card-foreground);
+  --color-card: var(--ui-card);
+  --color-foreground: var(--ui-foreground);
+  --color-background: var(--ui-background);
+  --radius-sm: calc(var(--ui-radius) * 0.6);
+  --radius-md: calc(var(--ui-radius) * 0.8);
+  --radius-lg: var(--ui-radius);
+  --radius-xl: calc(var(--ui-radius) * 1.4);
+  --radius-2xl: calc(var(--ui-radius) * 1.8);
+  --radius-3xl: calc(var(--ui-radius) * 2.2);
+  --radius-4xl: calc(var(--ui-radius) * 2.6);
+}
+
+.tw-scope {
+  --ui-background: var(--bg, var(--builder-bg, #0B0B0A));
+  --ui-foreground: var(--text, var(--builder-text, #FFF9F0));
+  --ui-card: var(--card, var(--builder-panel, #151513));
+  --ui-card-foreground: var(--text, var(--builder-text, #FFF9F0));
+  --ui-popover: var(--elevated, var(--builder-elevated, #1D1C19));
+  --ui-popover-foreground: var(--text, var(--builder-text, #FFF9F0));
+  --ui-primary: var(--orange, var(--builder-orange, #F06445));
+  --ui-primary-foreground: #FFF9F0;
+  --ui-secondary: var(--elevated, var(--builder-elevated, #1D1C19));
+  --ui-secondary-foreground: var(--text, var(--builder-text, #FFF9F0));
+  --ui-muted: var(--elevated, var(--builder-elevated, #1D1C19));
+  --ui-muted-foreground: var(--secondary, var(--builder-secondary, #A8A39B));
+  --ui-accent: var(--orange, var(--builder-orange, #F06445));
+  --ui-accent-foreground: #FFF9F0;
+  --ui-destructive: var(--red, #F27D91);
+  --ui-border: rgba(255,255,255,.12);
+  --ui-input: rgba(255,255,255,.16);
+  --ui-ring: var(--orange, var(--builder-orange, #F06445));
+  --ui-chart-1: var(--orange, var(--builder-orange, #F06445));
+  --ui-chart-2: var(--green, #55B77E);
+  --ui-chart-3: var(--amber, #E0A93B);
+  --ui-chart-4: var(--red, #F27D91);
+  --ui-chart-5: var(--secondary, var(--builder-secondary, #A8A39B));
+  --ui-sidebar: var(--sidebar, #050505);
+  --ui-sidebar-foreground: var(--text, var(--builder-text, #FFF9F0));
+  --ui-sidebar-primary: var(--orange, var(--builder-orange, #F06445));
+  --ui-sidebar-primary-foreground: #FFF9F0;
+  --ui-sidebar-accent: var(--elevated, var(--builder-elevated, #1D1C19));
+  --ui-sidebar-accent-foreground: var(--text, var(--builder-text, #FFF9F0));
+  --ui-sidebar-border: rgba(255,255,255,.12);
+  --ui-sidebar-ring: var(--orange, var(--builder-orange, #F06445));
+  --ui-radius: 0.625rem;
+}
+
+.tw-scope,
+.tw-scope *,
+.tw-scope *::before,
+.tw-scope *::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--ui-border);
+}
+
+.tw-scope button,
+.tw-scope input,
+.tw-scope select,
+.tw-scope textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.tw-scope button {
+  background: transparent;
+  cursor: pointer;
+}

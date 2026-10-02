@@ -1,0 +1,81 @@
+{
+  "id": "hospital-demo",
+  "name": "Hospital Outpatient Flow",
+  "simulation": { "duration": 480, "seed": 42 },
+  "nodes": [
+    {
+      "id": "patients",
+      "type": "source",
+      "name": "Patient Arrivals",
+      "position": { "x": 0, "y": 100 },
+      "config": { "distribution": "exponential", "mean_interarrival_time": 5 }
+    },
+    {
+      "id": "registration",
+      "type": "process",
+      "name": "Registration",
+      "position": { "x": 200, "y": 100 },
+      "config": { "resource_count": 2, "service_distribution": "uniform", "mean_service_time": 3, "minimum_service_time": 2, "maximum_service_time": 4 }
+    },
+    {
+      "id": "doctor-wait",
+      "type": "queue",
+      "name": "Doctor Waiting Room",
+      "position": { "x": 400, "y": 100 },
+      "config": { "capacity": null, "discipline": "fifo" }
+    },
+    {
+      "id": "doctor",
+      "type": "process",
+      "name": "Doctor Consultation",
+      "position": { "x": 600, "y": 100 },
+      "config": { "resource_count": 3, "service_distribution": "exponential", "mean_service_time": 12 }
+    },
+    {
+      "id": "next-step",
+      "type": "decision",
+      "name": "Further Care?",
+      "position": { "x": 800, "y": 100 },
+      "config": { "routing": "probability" }
+    },
+    {
+      "id": "pharmacy-wait",
+      "type": "queue",
+      "name": "Pharmacy Queue",
+      "position": { "x": 1000, "y": 0 },
+      "config": { "capacity": 30, "discipline": "fifo" }
+    },
+    {
+      "id": "pharmacy",
+      "type": "process",
+      "name": "Pharmacy",
+      "position": { "x": 1200, "y": 0 },
+      "config": { "resource_count": 1, "service_distribution": "constant", "mean_service_time": 4 }
+    },
+    {
+      "id": "paperwork",
+      "type": "delay",
+      "name": "Paperwork Delay",
+      "position": { "x": 1000, "y": 200 },
+      "config": { "distribution": "uniform", "mean_delay": 2, "minimum_delay": 1, "maximum_delay": 3 }
+    },
+    {
+      "id": "discharge",
+      "type": "sink",
+      "name": "Discharge",
+      "position": { "x": 1400, "y": 100 },
+      "config": {}
+    }
+  ],
+  "edges": [
+    { "id": "e-patients-registration", "source": "patients", "target": "registration" },
+    { "id": "e-registration-wait", "source": "registration", "target": "doctor-wait" },
+    { "id": "e-wait-doctor", "source": "doctor-wait", "target": "doctor" },
+    { "id": "e-doctor-decision", "source": "doctor", "target": "next-step" },
+    { "id": "e-decision-pharmacy", "source": "next-step", "target": "pharmacy-wait", "probability": 0.7 },
+    { "id": "e-decision-paperwork", "source": "next-step", "target": "paperwork", "probability": 0.3 },
+    { "id": "e-pharmacy-wait-process", "source": "pharmacy-wait", "target": "pharmacy" },
+    { "id": "e-pharmacy-discharge", "source": "pharmacy", "target": "discharge" },
+    { "id": "e-paperwork-discharge", "source": "paperwork", "target": "discharge" }
+  ]
+}

@@ -1,0 +1,632 @@
+{
+  "$defs": {
+    "DecisionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "routing": {
+          "const": "probability",
+          "title": "Routing",
+          "type": "string"
+        }
+      },
+      "required": [
+        "routing"
+      ],
+      "title": "DecisionConfig",
+      "type": "object"
+    },
+    "DecisionNode": {
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/DecisionConfig"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "type": {
+          "const": "decision",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "type",
+        "config"
+      ],
+      "title": "DecisionNode",
+      "type": "object"
+    },
+    "DelayConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "distribution": {
+          "enum": [
+            "constant",
+            "exponential",
+            "uniform"
+          ],
+          "title": "Distribution",
+          "type": "string"
+        },
+        "maximum_delay": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Delay"
+        },
+        "mean_delay": {
+          "exclusiveMinimum": 0,
+          "title": "Mean Delay",
+          "type": "number"
+        },
+        "minimum_delay": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Delay"
+        }
+      },
+      "required": [
+        "distribution",
+        "mean_delay"
+      ],
+      "title": "DelayConfig",
+      "type": "object"
+    },
+    "DelayNode": {
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/DelayConfig"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "type": {
+          "const": "delay",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "type",
+        "config"
+      ],
+      "title": "DelayNode",
+      "type": "object"
+    },
+    "Edge": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "probability": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Probability"
+        },
+        "source": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "sourceHandle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sourcehandle"
+        },
+        "target": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target"
+      ],
+      "title": "Edge",
+      "type": "object"
+    },
+    "Position": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "Position",
+      "type": "object"
+    },
+    "ProcessConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "cost_per_resource": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Per Resource"
+        },
+        "maximum_service_time": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Service Time"
+        },
+        "mean_service_time": {
+          "exclusiveMinimum": 0,
+          "title": "Mean Service Time",
+          "type": "number"
+        },
+        "minimum_service_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Service Time"
+        },
+        "resource_count": {
+          "exclusiveMinimum": 0,
+          "title": "Resource Count",
+          "type": "integer"
+        },
+        "service_distribution": {
+          "enum": [
+            "constant",
+            "exponential",
+            "uniform"
+          ],
+          "title": "Service Distribution",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_count",
+        "service_distribution",
+        "mean_service_time"
+      ],
+      "title": "ProcessConfig",
+      "type": "object"
+    },
+    "ProcessNode": {
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/ProcessConfig"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "type": {
+          "const": "process",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "type",
+        "config"
+      ],
+      "title": "ProcessNode",
+      "type": "object"
+    },
+    "QueueConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Capacity"
+        },
+        "discipline": {
+          "const": "fifo",
+          "title": "Discipline",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capacity",
+        "discipline"
+      ],
+      "title": "QueueConfig",
+      "type": "object"
+    },
+    "QueueNode": {
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/QueueConfig"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "type": {
+          "const": "queue",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "type",
+        "config"
+      ],
+      "title": "QueueNode",
+      "type": "object"
+    },
+    "SimulationSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "exclusiveMinimum": 0,
+          "title": "Duration",
+          "type": "number"
+        },
+        "seed": {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "title": "Seed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "duration",
+        "seed"
+      ],
+      "title": "SimulationSettings",
+      "type": "object"
+    },
+    "SinkConfig": {
+      "additionalProperties": false,
+      "properties": {},
+      "title": "SinkConfig",
+      "type": "object"
+    },
+    "SinkNode": {
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/SinkConfig"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "type": {
+          "const": "sink",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "type",
+        "config"
+      ],
+      "title": "SinkNode",
+      "type": "object"
+    },
+    "SourceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "distribution": {
+          "enum": [
+            "constant",
+            "exponential",
+            "uniform"
+          ],
+          "title": "Distribution",
+          "type": "string"
+        },
+        "max_entities": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Entities"
+        },
+        "maximum_interarrival_time": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Interarrival Time"
+        },
+        "mean_interarrival_time": {
+          "exclusiveMinimum": 0,
+          "title": "Mean Interarrival Time",
+          "type": "number"
+        },
+        "minimum_interarrival_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Interarrival Time"
+        }
+      },
+      "required": [
+        "distribution",
+        "mean_interarrival_time"
+      ],
+      "title": "SourceConfig",
+      "type": "object"
+    },
+    "SourceNode": {
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/SourceConfig"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "type": {
+          "const": "source",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "type",
+        "config"
+      ],
+      "title": "SourceNode",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/Edge"
+      },
+      "title": "Edges",
+      "type": "array"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "nodes": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "decision": "#/$defs/DecisionNode",
+            "delay": "#/$defs/DelayNode",
+            "process": "#/$defs/ProcessNode",
+            "queue": "#/$defs/QueueNode",
+            "sink": "#/$defs/SinkNode",
+            "source": "#/$defs/SourceNode"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/SourceNode"
+          },
+          {
+            "$ref": "#/$defs/QueueNode"
+          },
+          {
+            "$ref": "#/$defs/ProcessNode"
+          },
+          {
+            "$ref": "#/$defs/DecisionNode"
+          },
+          {
+            "$ref": "#/$defs/DelayNode"
+          },
+          {
+            "$ref": "#/$defs/SinkNode"
+          }
+        ]
+      },
+      "title": "Nodes",
+      "type": "array"
+    },
+    "simulation": {
+      "$ref": "#/$defs/SimulationSettings"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "simulation",
+    "nodes",
+    "edges"
+  ],
+  "title": "SimulationModel",
+  "type": "object"
+}

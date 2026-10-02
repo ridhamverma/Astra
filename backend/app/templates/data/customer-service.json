@@ -1,0 +1,140 @@
+{
+  "id": "template-customer-service",
+  "name": "Customer-service Center",
+  "simulation": {
+    "duration": 480,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Request Arrival",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 3
+      },
+      "position": {
+        "x": 0,
+        "y": 80
+      }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Support Queue",
+      "config": {
+        "capacity": 30,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 260,
+        "y": 80
+      }
+    },
+    {
+      "id": "agents",
+      "type": "process",
+      "name": "Support Agents",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "exponential",
+        "mean_service_time": 4
+      },
+      "position": {
+        "x": 520,
+        "y": 80
+      }
+    },
+    {
+      "id": "resolution",
+      "type": "decision",
+      "name": "Resolved?",
+      "config": {
+        "routing": "probability"
+      },
+      "position": {
+        "x": 780,
+        "y": 80
+      }
+    },
+    {
+      "id": "escalation-wait",
+      "type": "queue",
+      "name": "Escalation Queue",
+      "config": {
+        "capacity": 15,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 1040,
+        "y": 220
+      }
+    },
+    {
+      "id": "specialist",
+      "type": "process",
+      "name": "Specialist",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 7,
+        "minimum_service_time": 5,
+        "maximum_service_time": 9
+      },
+      "position": {
+        "x": 1300,
+        "y": 220
+      }
+    },
+    {
+      "id": "closed",
+      "type": "sink",
+      "name": "Request Closed",
+      "config": {},
+      "position": {
+        "x": 1560,
+        "y": 80
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-waiting",
+      "source": "arrivals",
+      "target": "waiting"
+    },
+    {
+      "id": "e-waiting-agents",
+      "source": "waiting",
+      "target": "agents"
+    },
+    {
+      "id": "e-agents-resolution",
+      "source": "agents",
+      "target": "resolution"
+    },
+    {
+      "id": "e-resolved",
+      "source": "resolution",
+      "target": "closed",
+      "probability": 0.8
+    },
+    {
+      "id": "e-escalated",
+      "source": "resolution",
+      "target": "escalation-wait",
+      "probability": 0.2
+    },
+    {
+      "id": "e-escalation-specialist",
+      "source": "escalation-wait",
+      "target": "specialist"
+    },
+    {
+      "id": "e-specialist-closed",
+      "source": "specialist",
+      "target": "closed"
+    }
+  ]
+}

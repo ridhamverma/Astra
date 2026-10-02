@@ -1,0 +1,40 @@
+{
+  "id": "bank-demo",
+  "name": "Bank Service Counter",
+  "simulation": { "duration": 480, "seed": 42 },
+  "nodes": [
+    {
+      "id": "customers",
+      "type": "source",
+      "name": "Customer Arrivals",
+      "position": { "x": 0, "y": 0 },
+      "config": { "distribution": "exponential", "mean_interarrival_time": 3 }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Waiting Area",
+      "position": { "x": 240, "y": 0 },
+      "config": { "capacity": 20, "discipline": "fifo" }
+    },
+    {
+      "id": "counter",
+      "type": "process",
+      "name": "Service Counters",
+      "position": { "x": 480, "y": 0 },
+      "config": { "resource_count": 2, "service_distribution": "exponential", "mean_service_time": 5, "cost_per_resource": 25 }
+    },
+    {
+      "id": "exit",
+      "type": "sink",
+      "name": "Customer Exit",
+      "position": { "x": 720, "y": 0 },
+      "config": {}
+    }
+  ],
+  "edges": [
+    { "id": "e-customers-waiting", "source": "customers", "target": "waiting" },
+    { "id": "e-waiting-counter", "source": "waiting", "target": "counter" },
+    { "id": "e-counter-exit", "source": "counter", "target": "exit" }
+  ]
+}

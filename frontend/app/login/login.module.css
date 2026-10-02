@@ -1,0 +1,265 @@
+.page {
+  --login-background: #F8F7F3;
+  --login-card: #FFFFFF;
+  --login-text: #242321;
+  --login-secondary: #706D66;
+  --login-border: #DDD9D0;
+  --login-coral: #D95D45;
+  --login-hover: #B94735;
+  --login-focus: #F0B0A3;
+  --login-error: #B93832;
+  min-height: 100svh;
+  padding: 48px 24px;
+  background: var(--login-background);
+  color: var(--login-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.card {
+  width: 100%;
+  max-width: 1000px;
+  min-height: clamp(520px, calc(100svh - 180px), 668px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  padding: 32px;
+  background: var(--login-card);
+  border-radius: 12px;
+}
+.formPanel { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; line-height: 28px; }
+.logo { width: 28px; height: 28px; flex: 0 0 28px; color: var(--login-coral); }
+.formCard { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.formContent { margin-block: auto; padding-block: 32px; min-height: max-content; flex: 0 0 auto; }
+.formCard h1 { margin: 0; color: var(--login-text); font-size: 40px; font-family: var(--font-display), Georgia, serif; font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; }
+.formDescription { color: var(--login-secondary); font-size: 12px; line-height: 1.5; margin: 8px 0 18px; }
+.form { display: flex; flex-direction: column; gap: 16px; min-height: max-content; flex: 0 0 auto; }
+.visuallyHidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: max-content;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  transition: box-shadow 150ms ease, border-color 150ms ease;
+  box-sizing: border-box;
+}
+.field.fieldInvalid,
+.field:has(.errorPanel),
+.field:has(.input[aria-invalid="true"]) {
+  border: 1px solid #B3402A;
+  border-radius: 12px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+.field.fieldInvalid:focus-within,
+.field:has(.errorPanel):focus-within,
+.field:has(.input[aria-invalid="true"]):focus-within {
+  box-shadow: 0 0 0 3px rgba(179, 64, 42, 0.15);
+  border-radius: 12px;
+}
+.input { width: 100%; min-width: 0; height: 36px; border: 1px solid #E3DED6; background: #FFFFFF; border-radius: 12px; padding: 0 10px; color: var(--login-text); font: inherit; font-size: 14px; font-weight: 400; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.input::placeholder { color: #9A948A; opacity: 1; }
+.input:hover:not(:disabled):not(:focus) { border-color: var(--login-secondary); }
+.input:focus, .input:focus-visible { outline: none; border-color: #C9644B; box-shadow: 0 0 0 3px rgba(201, 100, 75, 0.15); }
+.input:disabled { opacity: .65; cursor: not-allowed; }
+.field.fieldInvalid .input,
+.field:has(.errorPanel) .input,
+.field:has(.input[aria-invalid="true"]) .input,
+.input.inputError,
+.input[aria-invalid="true"] {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  border-radius: 0;
+  height: 34px;
+}
+.field.fieldInvalid:has(.errorPanel) .input,
+.field.fieldInvalid .input.inputHasPanel,
+.field:has(.errorPanel) .input.inputHasPanel {
+  height: 35px;
+}
+.field.fieldInvalid .input:hover:not(:disabled),
+.field:has(.errorPanel) .input:hover:not(:disabled),
+.field:has(.input[aria-invalid="true"]) .input:hover:not(:disabled),
+.input.inputError:hover:not(:disabled),
+.input[aria-invalid="true"]:hover:not(:disabled) {
+  border: 0;
+}
+.field.fieldInvalid .input:focus,
+.field.fieldInvalid .input:focus-visible,
+.field:has(.errorPanel) .input:focus,
+.field:has(.errorPanel) .input:focus-visible,
+.field:has(.input[aria-invalid="true"]) .input:focus,
+.field:has(.input[aria-invalid="true"]) .input:focus-visible,
+.input.inputError:focus,
+.input.inputError:focus-visible,
+.input.inputHasPanel:focus,
+.input.inputHasPanel:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border: 0;
+}
+.errorPanel {
+  margin-top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: max-content;
+  flex: 0 0 auto;
+  background: rgba(179, 64, 42, 0.08);
+  border: 1px solid #B3402A;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #B3402A;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  animation: errorFadeIn 150ms ease forwards;
+}
+.field.fieldInvalid .errorPanel,
+.field:has(.errorPanel) .errorPanel {
+  border: 0;
+  border-top: 0;
+  border-radius: 0;
+  background: rgba(179, 64, 42, 0.08);
+  margin-top: 0;
+}
+@keyframes errorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.inputWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.inputWithToggle {
+  padding-right: 38px;
+}
+.input::-ms-reveal,
+.input::-ms-clear {
+  display: none;
+}
+.passwordToggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #8A847C;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, transform 100ms ease;
+  z-index: 2;
+  user-select: none;
+}
+.passwordToggle:hover:not(:disabled) {
+  color: var(--login-coral);
+  background: rgba(201, 100, 75, 0.08);
+}
+.passwordToggle:active:not(:disabled) {
+  transform: translateY(-50%) scale(0.94);
+}
+.passwordToggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(201, 100, 75, 0.35);
+}
+.passwordToggle:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.passwordToggle svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.registerForm .submit,
+.submitRegister,
+.registerSubmit {
+  margin-top: 4px;
+}
+.error { display: flex; align-items: flex-start; gap: 8px; border: 1px solid var(--login-focus); background: #fff4f2; border-radius: 8px; padding: 10px; font-size: 12px; line-height: 1.5; color: var(--login-error); margin: 0; overflow-wrap: anywhere; }
+.error svg { flex-shrink: 0; margin-top: 1px; }
+.submit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 36px; margin-top: 0; padding: 8px 16px; border: 1px solid transparent; border-radius: 8px; background: var(--login-coral); color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 18px; cursor: pointer; transition: background .15s; }
+.submit:hover:not(:disabled) { background: var(--login-hover); color: #FFFFFF; }
+.submit:focus-visible, .accountLink:focus-visible, .legal a:focus-visible { outline: 3px solid var(--login-focus); outline-offset: 3px; }
+.submit:disabled { opacity: .6; cursor: not-allowed; }
+.spinner { width: 14px; height: 14px; border: 2px solid #ffffff55; border-top-color: currentColor; border-radius: 50%; animation: rotate .8s linear infinite; }
+.account { color: var(--login-secondary); font-size: 12px; line-height: 18px; margin: 0; }
+.accountLink { color: var(--login-coral); font-weight: 600; text-decoration: none; }
+.accountLink:hover, .legal a:hover { color: var(--login-hover); text-decoration: none; }
+.imagePanel { position: relative; min-width: 0; min-height: 0; overflow: hidden; border-radius: 12px; }
+.coverImage { object-fit: cover; object-position: center; }
+.legal { max-width: 1000px; margin: 0; color: var(--login-text); font-size: 12px; line-height: 1.7; text-align: center; opacity: 1; }
+.legal a { color: var(--login-coral); font-weight: 600; text-decoration: none; }
+@keyframes rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } .input, .submit { transition: none; } .errorPanel { animation: none; } }
+@media (max-width: 900px) {
+  .card { min-height: clamp(480px, calc(100svh - 156px), 600px); padding: 24px; gap: 24px; }
+  .formCard h1 { font-size: 34px; font-weight: 500; }
+}
+@media (max-width: 639px) {
+  .page { padding: 24px 16px; gap: 16px; }
+  .card { grid-template-columns: minmax(0, 1fr); padding: 16px; min-height: 0; gap: 24px; max-width: 460px; }
+  .imagePanel { order: -1; height: 220px; }
+  .coverImage { object-position: center 40%; }
+  .formPanel { gap: 12px; }
+  .formContent { padding: 24px 0 32px; }
+  .formCard h1 { font-size: 32px; font-weight: 500; }
+  .input { height: 44px; font-size: 16px; }
+  .field.fieldInvalid .input,
+  .field:has(.errorPanel) .input,
+  .field:has(.input[aria-invalid="true"]) .input,
+  .input.inputError,
+  .input[aria-invalid="true"] {
+    height: 42px;
+    font-size: 16px;
+  }
+  .field.fieldInvalid:has(.errorPanel) .input,
+  .field.fieldInvalid .input.inputHasPanel,
+  .field:has(.errorPanel) .input.inputHasPanel {
+    height: 43px;
+    font-size: 16px;
+  }
+  .inputWithToggle {
+    padding-right: 42px;
+  }
+  .passwordToggle {
+    width: 32px;
+    height: 32px;
+    right: 6px;
+  }
+  .passwordToggle svg {
+    width: 20px;
+    height: 20px;
+  }
+  .submit { min-height: 44px; }
+  .account { padding-bottom: 4px; }
+  .legal { max-width: 420px; }
+}

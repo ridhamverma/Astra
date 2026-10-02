@@ -1,0 +1,713 @@
+{
+  "$defs": {
+    "BottleneckAnalysis": {
+      "properties": {
+        "method": {
+          "const": "utilization_pressure_v1",
+          "default": "utilization_pressure_v1",
+          "title": "Method",
+          "type": "string"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "primaryBottleneck": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Primarybottleneck"
+        },
+        "ranked": {
+          "items": {
+            "$ref": "#/$defs/RankedBottleneck"
+          },
+          "title": "Ranked",
+          "type": "array"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "detected",
+            "no_congestion",
+            "insufficient_data",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "primaryBottleneck",
+        "score",
+        "reasons",
+        "ranked",
+        "notes"
+      ],
+      "title": "BottleneckAnalysis",
+      "type": "object"
+    },
+    "BottleneckEvidence": {
+      "properties": {
+        "average_queue_length": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Queue Length"
+        },
+        "average_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Waiting Time"
+        },
+        "congestion_pressure": {
+          "title": "Congestion Pressure",
+          "type": "number"
+        },
+        "maximum_queue_length": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Queue Length"
+        },
+        "maximum_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Waiting Time"
+        },
+        "normalized_queue": {
+          "title": "Normalized Queue",
+          "type": "number"
+        },
+        "normalized_waiting": {
+          "title": "Normalized Waiting",
+          "type": "number"
+        },
+        "reference_service_time": {
+          "title": "Reference Service Time",
+          "type": "number"
+        },
+        "rejected_entities": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rejected Entities"
+        },
+        "rejection_fraction": {
+          "title": "Rejection Fraction",
+          "type": "number"
+        },
+        "service_time_basis": {
+          "enum": [
+            "measured",
+            "configured"
+          ],
+          "title": "Service Time Basis",
+          "type": "string"
+        },
+        "upstream_queues": {
+          "items": {
+            "$ref": "#/$defs/QueueEvidence"
+          },
+          "title": "Upstream Queues",
+          "type": "array"
+        },
+        "utilization": {
+          "title": "Utilization",
+          "type": "number"
+        },
+        "waiting_at_end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Waiting At End"
+        }
+      },
+      "required": [
+        "utilization",
+        "average_waiting_time",
+        "maximum_waiting_time",
+        "reference_service_time",
+        "service_time_basis",
+        "average_queue_length",
+        "maximum_queue_length",
+        "waiting_at_end",
+        "rejected_entities",
+        "normalized_waiting",
+        "normalized_queue",
+        "rejection_fraction",
+        "congestion_pressure",
+        "upstream_queues"
+      ],
+      "title": "BottleneckEvidence",
+      "type": "object"
+    },
+    "Entity": {
+      "properties": {
+        "completed_at": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed At"
+        },
+        "created_at": {
+          "title": "Created At",
+          "type": "number"
+        },
+        "current_node": {
+          "title": "Current Node",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "rejected_at": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rejected At"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "completed",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "created_at",
+        "current_node"
+      ],
+      "title": "Entity",
+      "type": "object"
+    },
+    "ProcessMetrics": {
+      "properties": {
+        "average_service_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Service Time"
+        },
+        "average_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Waiting Time"
+        },
+        "entities_processed": {
+          "title": "Entities Processed",
+          "type": "integer"
+        },
+        "maximum_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Waiting Time"
+        },
+        "resource_count": {
+          "title": "Resource Count",
+          "type": "integer"
+        },
+        "resource_utilization": {
+          "title": "Resource Utilization",
+          "type": "number"
+        },
+        "services_started": {
+          "title": "Services Started",
+          "type": "integer"
+        },
+        "total_busy_resource_time": {
+          "title": "Total Busy Resource Time",
+          "type": "number"
+        }
+      },
+      "required": [
+        "resource_count",
+        "services_started",
+        "entities_processed",
+        "total_busy_resource_time",
+        "resource_utilization",
+        "average_service_time",
+        "average_waiting_time",
+        "maximum_waiting_time"
+      ],
+      "title": "ProcessMetrics",
+      "type": "object"
+    },
+    "QueueEvidence": {
+      "properties": {
+        "average_queue_length": {
+          "title": "Average Queue Length",
+          "type": "number"
+        },
+        "average_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Waiting Time"
+        },
+        "maximum_queue_length": {
+          "title": "Maximum Queue Length",
+          "type": "integer"
+        },
+        "maximum_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Waiting Time"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "rejected_entities": {
+          "title": "Rejected Entities",
+          "type": "integer"
+        },
+        "total_arrivals": {
+          "title": "Total Arrivals",
+          "type": "integer"
+        },
+        "waiting_at_end": {
+          "title": "Waiting At End",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "node_id",
+        "name",
+        "average_waiting_time",
+        "maximum_waiting_time",
+        "average_queue_length",
+        "maximum_queue_length",
+        "waiting_at_end",
+        "rejected_entities",
+        "total_arrivals"
+      ],
+      "title": "QueueEvidence",
+      "type": "object"
+    },
+    "QueueMetrics": {
+      "properties": {
+        "average_queue_length": {
+          "title": "Average Queue Length",
+          "type": "number"
+        },
+        "average_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Waiting Time"
+        },
+        "maximum_queue_length": {
+          "title": "Maximum Queue Length",
+          "type": "integer"
+        },
+        "maximum_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Waiting Time"
+        },
+        "rejected_entities": {
+          "title": "Rejected Entities",
+          "type": "integer"
+        },
+        "total_arrivals": {
+          "title": "Total Arrivals",
+          "type": "integer"
+        },
+        "total_exited": {
+          "title": "Total Exited",
+          "type": "integer"
+        },
+        "waiting_at_end": {
+          "title": "Waiting At End",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total_arrivals",
+        "total_exited",
+        "rejected_entities",
+        "average_waiting_time",
+        "maximum_waiting_time",
+        "average_queue_length",
+        "maximum_queue_length",
+        "waiting_at_end"
+      ],
+      "title": "QueueMetrics",
+      "type": "object"
+    },
+    "RankedBottleneck": {
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/BottleneckEvidence"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "node_id",
+        "name",
+        "score",
+        "evidence",
+        "reasons"
+      ],
+      "title": "RankedBottleneck",
+      "type": "object"
+    },
+    "SimulationEvent": {
+      "properties": {
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "time": {
+          "title": "Time",
+          "type": "number"
+        },
+        "type": {
+          "enum": [
+            "entity_created",
+            "node_enter",
+            "service_started",
+            "service_completed",
+            "node_exit",
+            "entity_completed",
+            "queue_enter",
+            "queue_exit",
+            "queue_rejected",
+            "queue_wait_started",
+            "service_requested"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "time",
+        "type",
+        "entity_id",
+        "node_id"
+      ],
+      "title": "SimulationEvent",
+      "type": "object"
+    },
+    "SimulationSummary": {
+      "properties": {
+        "average_cycle_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Cycle Time"
+        },
+        "average_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Waiting Time"
+        },
+        "completion_rate": {
+          "title": "Completion Rate",
+          "type": "number"
+        },
+        "in_system_at_end": {
+          "title": "In System At End",
+          "type": "integer"
+        },
+        "maximum_cycle_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Cycle Time"
+        },
+        "maximum_waiting_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Waiting Time"
+        },
+        "throughput": {
+          "title": "Throughput",
+          "type": "number"
+        },
+        "total_completed": {
+          "title": "Total Completed",
+          "type": "integer"
+        },
+        "total_generated": {
+          "title": "Total Generated",
+          "type": "integer"
+        },
+        "total_rejected": {
+          "title": "Total Rejected",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total_generated",
+        "total_completed",
+        "total_rejected",
+        "in_system_at_end",
+        "completion_rate",
+        "average_cycle_time",
+        "maximum_cycle_time",
+        "average_waiting_time",
+        "maximum_waiting_time",
+        "throughput"
+      ],
+      "title": "SimulationSummary",
+      "type": "object"
+    },
+    "SimulationTimeSeries": {
+      "properties": {
+        "cumulative_completed": {
+          "items": {
+            "$ref": "#/$defs/TimeSeriesPoint"
+          },
+          "title": "Cumulative Completed",
+          "type": "array"
+        },
+        "queue_lengths": {
+          "additionalProperties": {
+            "items": {
+              "$ref": "#/$defs/TimeSeriesPoint"
+            },
+            "type": "array"
+          },
+          "title": "Queue Lengths",
+          "type": "object"
+        }
+      },
+      "required": [
+        "queue_lengths",
+        "cumulative_completed"
+      ],
+      "title": "SimulationTimeSeries",
+      "type": "object"
+    },
+    "TimeSeriesPoint": {
+      "properties": {
+        "time": {
+          "title": "Time",
+          "type": "number"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "time",
+        "value"
+      ],
+      "title": "TimeSeriesPoint",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "bottleneckAnalysis": {
+      "$ref": "#/$defs/BottleneckAnalysis"
+    },
+    "entities": {
+      "items": {
+        "$ref": "#/$defs/Entity"
+      },
+      "title": "Entities",
+      "type": "array"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/SimulationEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "nodeMetrics": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ProcessMetrics"
+          },
+          {
+            "$ref": "#/$defs/QueueMetrics"
+          }
+        ]
+      },
+      "title": "Nodemetrics",
+      "type": "object"
+    },
+    "simulationId": {
+      "title": "Simulationid",
+      "type": "string"
+    },
+    "summary": {
+      "$ref": "#/$defs/SimulationSummary"
+    },
+    "timeSeries": {
+      "$ref": "#/$defs/SimulationTimeSeries"
+    }
+  },
+  "required": [
+    "simulationId",
+    "summary",
+    "nodeMetrics",
+    "timeSeries",
+    "events",
+    "entities",
+    "bottleneckAnalysis"
+  ],
+  "title": "SimulationResult",
+  "type": "object"
+}

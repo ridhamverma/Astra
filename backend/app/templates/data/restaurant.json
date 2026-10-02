@@ -1,0 +1,136 @@
+{
+  "id": "template-restaurant",
+  "name": "Restaurant",
+  "simulation": {
+    "duration": 480,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Customer Arrival",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 3
+      },
+      "position": {
+        "x": 0,
+        "y": 80
+      }
+    },
+    {
+      "id": "orders",
+      "type": "queue",
+      "name": "Order Queue",
+      "config": {
+        "capacity": 20,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 260,
+        "y": 80
+      }
+    },
+    {
+      "id": "cashier",
+      "type": "process",
+      "name": "Cashier",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 2,
+        "minimum_service_time": 1,
+        "maximum_service_time": 3
+      },
+      "position": {
+        "x": 520,
+        "y": 80
+      }
+    },
+    {
+      "id": "kitchen-wait",
+      "type": "queue",
+      "name": "Kitchen Queue",
+      "config": {
+        "capacity": 30,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 780,
+        "y": 80
+      }
+    },
+    {
+      "id": "kitchen",
+      "type": "process",
+      "name": "Kitchen",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "uniform",
+        "mean_service_time": 6,
+        "minimum_service_time": 4,
+        "maximum_service_time": 8
+      },
+      "position": {
+        "x": 1040,
+        "y": 80
+      }
+    },
+    {
+      "id": "pickup",
+      "type": "delay",
+      "name": "Pickup",
+      "config": {
+        "distribution": "constant",
+        "mean_delay": 1
+      },
+      "position": {
+        "x": 1300,
+        "y": 80
+      }
+    },
+    {
+      "id": "served",
+      "type": "sink",
+      "name": "Order Collected",
+      "config": {},
+      "position": {
+        "x": 1560,
+        "y": 80
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-orders",
+      "source": "arrivals",
+      "target": "orders"
+    },
+    {
+      "id": "e-orders-cashier",
+      "source": "orders",
+      "target": "cashier"
+    },
+    {
+      "id": "e-cashier-kitchen-wait",
+      "source": "cashier",
+      "target": "kitchen-wait"
+    },
+    {
+      "id": "e-kitchen-wait-kitchen",
+      "source": "kitchen-wait",
+      "target": "kitchen"
+    },
+    {
+      "id": "e-kitchen-pickup",
+      "source": "kitchen",
+      "target": "pickup"
+    },
+    {
+      "id": "e-pickup-served",
+      "source": "pickup",
+      "target": "served"
+    }
+  ]
+}

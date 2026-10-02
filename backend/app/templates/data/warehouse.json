@@ -1,0 +1,136 @@
+{
+  "id": "template-warehouse",
+  "name": "Warehouse",
+  "simulation": {
+    "duration": 480,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Order Arrival",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 4
+      },
+      "position": {
+        "x": 0,
+        "y": 80
+      }
+    },
+    {
+      "id": "pick-wait",
+      "type": "queue",
+      "name": "Picking Queue",
+      "config": {
+        "capacity": 40,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 260,
+        "y": 80
+      }
+    },
+    {
+      "id": "pickers",
+      "type": "process",
+      "name": "Picking",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "uniform",
+        "mean_service_time": 6,
+        "minimum_service_time": 4,
+        "maximum_service_time": 8
+      },
+      "position": {
+        "x": 520,
+        "y": 80
+      }
+    },
+    {
+      "id": "pack-wait",
+      "type": "queue",
+      "name": "Packing Queue",
+      "config": {
+        "capacity": 30,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 780,
+        "y": 80
+      }
+    },
+    {
+      "id": "packing",
+      "type": "process",
+      "name": "Packing",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 3,
+        "minimum_service_time": 2,
+        "maximum_service_time": 4
+      },
+      "position": {
+        "x": 1040,
+        "y": 80
+      }
+    },
+    {
+      "id": "dispatch",
+      "type": "delay",
+      "name": "Dispatch",
+      "config": {
+        "distribution": "constant",
+        "mean_delay": 3
+      },
+      "position": {
+        "x": 1300,
+        "y": 80
+      }
+    },
+    {
+      "id": "shipped",
+      "type": "sink",
+      "name": "Order Shipped",
+      "config": {},
+      "position": {
+        "x": 1560,
+        "y": 80
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-pick-wait",
+      "source": "arrivals",
+      "target": "pick-wait"
+    },
+    {
+      "id": "e-pick-wait-pickers",
+      "source": "pick-wait",
+      "target": "pickers"
+    },
+    {
+      "id": "e-pickers-pack-wait",
+      "source": "pickers",
+      "target": "pack-wait"
+    },
+    {
+      "id": "e-pack-wait-packing",
+      "source": "pack-wait",
+      "target": "packing"
+    },
+    {
+      "id": "e-packing-dispatch",
+      "source": "packing",
+      "target": "dispatch"
+    },
+    {
+      "id": "e-dispatch-shipped",
+      "source": "dispatch",
+      "target": "shipped"
+    }
+  ]
+}

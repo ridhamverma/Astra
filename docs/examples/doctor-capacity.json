@@ -1,0 +1,40 @@
+{
+  "id": "doctor-capacity-demo",
+  "name": "Doctor Capacity Comparison",
+  "simulation": { "duration": 60, "seed": 42 },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Patient arrivals",
+      "position": { "x": 0, "y": 0 },
+      "config": { "distribution": "constant", "mean_interarrival_time": 2, "max_entities": 30 }
+    },
+    {
+      "id": "doctor-queue",
+      "type": "queue",
+      "name": "Doctor queue",
+      "position": { "x": 240, "y": 0 },
+      "config": { "capacity": null, "discipline": "fifo" }
+    },
+    {
+      "id": "doctor",
+      "type": "process",
+      "name": "Doctor",
+      "position": { "x": 480, "y": 0 },
+      "config": { "resource_count": 1, "service_distribution": "constant", "mean_service_time": 5 }
+    },
+    {
+      "id": "exit",
+      "type": "sink",
+      "name": "Exit",
+      "position": { "x": 720, "y": 0 },
+      "config": {}
+    }
+  ],
+  "edges": [
+    { "id": "arrival-queue", "source": "arrivals", "target": "doctor-queue" },
+    { "id": "queue-doctor", "source": "doctor-queue", "target": "doctor" },
+    { "id": "doctor-exit", "source": "doctor", "target": "exit" }
+  ]
+}

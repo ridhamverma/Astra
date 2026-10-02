@@ -1,0 +1,40 @@
+# ==============================================================================
+# Render Blueprint Specification for Astra (₹0 / $0 Free College Project)
+# Docs: https://render.com/docs/blueprint-spec
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # Astra Backend (FastAPI + SimPy Engine in Docker)
+  # Free tier: 512 MB RAM, 0.1 CPU, spins down on idle (~50s cold start)
+  # Cost: ₹0 / $0 — No credit card required.
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: astra-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    region: oregon
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ASTRA_APP_NAME
+        value: Astra API
+      - key: ASTRA_ENVIRONMENT
+        value: production
+      - key: ASTRA_COOKIE_SECURE
+        value: "true"
+      - key: ASTRA_COOKIE_SAMESITE
+        value: "none"
+      - key: ASTRA_DATABASE_URL
+        sync: false # Connect your free Neon PostgreSQL connection string here
+      - key: ASTRA_CORS_ORIGINS
+        # Update with your free Vercel frontend URL, e.g. https://astra.vercel.app
+        value: "http://localhost:3000"
+      - key: ASTRA_AI_PROVIDER
+        value: gemini
+      - key: ASTRA_GEMINI_MODEL
+        value: gemini-3.1-flash-lite
+      - key: ASTRA_GEMINI_API_KEY
+        sync: false # Set free Google AI Studio key in Render dashboard
+

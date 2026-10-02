@@ -1,0 +1,77 @@
+{
+  "id": "template-bank",
+  "name": "Bank",
+  "simulation": {
+    "duration": 480,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Customer Arrival",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 3
+      },
+      "position": {
+        "x": 0,
+        "y": 80
+      }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Waiting Area",
+      "config": {
+        "capacity": 20,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 260,
+        "y": 80
+      }
+    },
+    {
+      "id": "counters",
+      "type": "process",
+      "name": "Service Counters",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "exponential",
+        "mean_service_time": 5
+      },
+      "position": {
+        "x": 520,
+        "y": 80
+      }
+    },
+    {
+      "id": "exit",
+      "type": "sink",
+      "name": "Customer Exit",
+      "config": {},
+      "position": {
+        "x": 780,
+        "y": 80
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-waiting",
+      "source": "arrivals",
+      "target": "waiting"
+    },
+    {
+      "id": "e-waiting-counters",
+      "source": "waiting",
+      "target": "counters"
+    },
+    {
+      "id": "e-counters-exit",
+      "source": "counters",
+      "target": "exit"
+    }
+  ]
+}

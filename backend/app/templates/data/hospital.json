@@ -1,0 +1,116 @@
+{
+  "id": "template-hospital",
+  "name": "Hospital",
+  "simulation": {
+    "duration": 480,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Patient Arrival",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 5
+      },
+      "position": {
+        "x": 0,
+        "y": 80
+      }
+    },
+    {
+      "id": "registration",
+      "type": "process",
+      "name": "Registration",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 3,
+        "minimum_service_time": 2,
+        "maximum_service_time": 4
+      },
+      "position": {
+        "x": 260,
+        "y": 80
+      }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Waiting Queue",
+      "config": {
+        "capacity": null,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 520,
+        "y": 80
+      }
+    },
+    {
+      "id": "doctor",
+      "type": "process",
+      "name": "Doctor",
+      "config": {
+        "resource_count": 3,
+        "service_distribution": "exponential",
+        "mean_service_time": 12
+      },
+      "position": {
+        "x": 780,
+        "y": 80
+      }
+    },
+    {
+      "id": "treatment",
+      "type": "delay",
+      "name": "Treatment",
+      "config": {
+        "distribution": "constant",
+        "mean_delay": 4
+      },
+      "position": {
+        "x": 1040,
+        "y": 80
+      }
+    },
+    {
+      "id": "discharge",
+      "type": "sink",
+      "name": "Discharge",
+      "config": {},
+      "position": {
+        "x": 1300,
+        "y": 80
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-registration",
+      "source": "arrivals",
+      "target": "registration"
+    },
+    {
+      "id": "e-registration-waiting",
+      "source": "registration",
+      "target": "waiting"
+    },
+    {
+      "id": "e-waiting-doctor",
+      "source": "waiting",
+      "target": "doctor"
+    },
+    {
+      "id": "e-doctor-treatment",
+      "source": "doctor",
+      "target": "treatment"
+    },
+    {
+      "id": "e-treatment-discharge",
+      "source": "treatment",
+      "target": "discharge"
+    }
+  ]
+}

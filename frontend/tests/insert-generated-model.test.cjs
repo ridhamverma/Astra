@@ -1,0 +1,32 @@
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const ts = require('typescript');
+const helpers = {};
+new Function('exports', ts.transpileModule(fs.readFileSync(path.join(__dirname, '../lib/insert-generated-model.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2021 } }).outputText)(helpers);
+const node = (id, y = 0) => ({ id, type: 'process', name: id, position: { x: 40, y }, config: { resource_count: 2, mean_service_time: 5, service_distribution: 'constant' } });
+test('Reviewed insertion preserves the existing graph and simulation settings while remapping every draft connection', () => {
+  const base = { id: 'base', name: 'Existing', simulation: { duration: 480, seed: 42 }, nodes: [node('a', 200)], edges: [] };
+  const draft = { id: 'draft', name: 'AI', simulation: { duration: 60, seed: 1 }, nodes: [node('a'), node('b')], edges: [{ id: 'edge', source: 'a', target: 'b', probability: 0.7 }] };
+  const snapshot = structuredClone({ base, draft });
+  let count = 0;
+  const merged = helpers.insertGeneratedModel(base, draft, () => `new-${++count}`);
+  assert.equal(merged.id, base.id); assert.equal(merged.name, base.name);
+  assert.deepEqual(merged.simulation, base.simulation);
+  assert.deepEqual(merged.nodes[0], base.nodes[0]);
+  assert.equal(merged.nodes[1].position.y, 440);
+  assert.deepEqual(merged.edges[0], { id: 'new-3', source: 'new-1', target: 'new-2', probability: 0.7 });
+  merged.nodes[1].config.resource_count = 8;
+  assert.deepEqual({ base, draft }, snapshot);
+});
+test('Repeated draft insertion never reuses model node or edge IDs; request identity normalizes superficial differences', () => {
+  const base = { id: 'base', name: 'Blank', simulation: { duration: 480, seed: 42 }, nodes: [], edges: [] };
+  const draft = { ...base, nodes: [node('x')], edges: [] };
+  let count = 0; const id = () => `new-${++count}`;
+  const once = helpers.insertGeneratedModel(base, draft, id);
+  const twice = helpers.insertGeneratedModel(once, draft, id);
+  assert.equal(new Set(twice.nodes.map(n => n.id)).size, 2);
+  assert.equal(twice.nodes[0].position.y, 0); assert.equal(twice.nodes[1].position.y, 240);
+  assert.equal(helpers.generationRequestKey(' Model  a BANK\n'), helpers.generationRequestKey('model a bank'));
+});

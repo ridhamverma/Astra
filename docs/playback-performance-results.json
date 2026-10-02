@@ -1,0 +1,11 @@
+{
+  "events": 110000,
+  "samples": 5,
+  "frames_per_replay": 28,
+  "median_replay_ms": 5.852874999999983,
+  "p95_frame_cpu_ms": 0.624040999999977,
+  "max_frame_cpu_ms": 1.6818330000000117,
+  "event_budget": 4000,
+  "marker_limit": 80,
+  "environment": "Node.js algorithm benchmark; excludes React rendering and browser paint"
+}

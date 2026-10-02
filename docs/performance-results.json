@@ -1,0 +1,75 @@
+{
+  "python": "3.14.7",
+  "platform": "darwin",
+  "samples_per_case": 3,
+  "simulations": [
+    {
+      "case": "Hospital",
+      "median_ms": 3.604,
+      "max_ms": 4.181,
+      "events": 2160,
+      "entities": 99,
+      "completed": 92
+    },
+    {
+      "case": "Bank",
+      "median_ms": 3.448,
+      "max_ms": 4.442,
+      "events": 2354,
+      "entities": 153,
+      "completed": 149
+    },
+    {
+      "case": "Restaurant",
+      "median_ms": 6.498,
+      "max_ms": 6.814,
+      "events": 4117,
+      "entities": 153,
+      "completed": 147
+    },
+    {
+      "case": "Warehouse",
+      "median_ms": 5.327,
+      "max_ms": 5.418,
+      "events": 3186,
+      "entities": 119,
+      "completed": 116
+    },
+    {
+      "case": "Customer-service center",
+      "median_ms": 4.165,
+      "max_ms": 4.908,
+      "events": 2871,
+      "entities": 153,
+      "completed": 150
+    },
+    {
+      "case": "10,000 entities / 100 resources",
+      "median_ms": 258.055,
+      "max_ms": 315.925,
+      "events": 110000,
+      "entities": 10000,
+      "completed": 10000
+    }
+  ],
+  "api": [
+    {
+      "case": "Bank",
+      "median_ms": 9.624,
+      "max_ms": 15.191,
+      "http_status": 200,
+      "events": 2354,
+      "response_bytes": 257877,
+      "transport": "localhost HTTP including JSON serialization/transfer"
+    },
+    {
+      "case": "10,000 entities / 100 resources",
+      "median_ms": 276.566,
+      "max_ms": 281.261,
+      "http_status": 200,
+      "events": 110000,
+      "response_bytes": 12359449,
+      "transport": "localhost HTTP including JSON serialization/transfer"
+    }
+  ]
+}
