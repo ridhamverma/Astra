@@ -63,6 +63,7 @@
   border-radius: 12px;
 }
 .input { width: 100%; min-width: 0; height: 36px; border: 1px solid #E3DED6; background: #FFFFFF; border-radius: 12px; padding: 0 10px; color: var(--login-text); font: inherit; font-size: 14px; font-weight: 400; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.input[id="login-email"] { width: auto; }
 .input::placeholder { color: #9A948A; opacity: 1; }
 .input:hover:not(:disabled):not(:focus) { border-color: var(--login-secondary); }
 .input:focus, .input:focus-visible { outline: none; border-color: #C9644B; box-shadow: 0 0 0 3px rgba(201, 100, 75, 0.15); }
