@@ -11,6 +11,7 @@ from pathlib import Path
 from uuid import uuid4
 
 import pytest
+# pyrefly: ignore [missing-import]
 from test_persistence import test_database, client_for
 
 

@@ -1,10 +1,12 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { authApi, type AuthUser } from "@/services/auth";
 import { ApiRequestError, setCsrfToken } from "@/services/api";
 interface AuthState { user: AuthUser | null; loading: boolean; error: string; setUser: (user: AuthUser | null) => void; refresh: () => Promise<void> }
 const Context = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const isPublicLanding = usePathname() === "/";
   const [user, updateUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,6 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally { if (current === version.current) setLoading(false); }
   }, []);
   useEffect(() => {
+    // The public landing and its local demo do not need a session request.
+    if (isPublicLanding) return;
     void Promise.resolve().then(refresh);
     const unauthorized = () => setUser(null);
     const focused = () => { void refresh(); };
@@ -35,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // This is a request-generation counter, not a DOM ref; cleanup invalidates the latest request.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => { version.current++; window.removeEventListener("astra:unauthorized", unauthorized); window.removeEventListener("focus", focused); };
-  }, [refresh, setUser]);
+  }, [refresh, setUser, isPublicLanding]);
   return <Context.Provider value={{user, loading, error, setUser, refresh}}>{children}</Context.Provider>;
 }
 export function useAuth() { const value = useContext(Context); if (!value) throw new Error("AuthProvider is missing"); return value; }

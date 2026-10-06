@@ -1,6 +1,11 @@
-import { PlaceholderPage } from "@/components/placeholder-page";
+import type { Metadata } from "next";
+import { LandingPage } from "@/components/landing-page";
+
+export const metadata: Metadata = {
+  title: "Astra — Understand the flow. Improve what comes next.",
+  description: "Build visual process models, run discrete event simulations, and explore queues, throughput, wait times, and resource utilization with Astra.",
+};
 
 export default function HomePage() {
-  return <PlaceholderPage title="Model. Simulate. Improve." description="Astra is a visual platform for discrete-event simulation and operational optimization. The application foundation is ready for the next phase." />;
+  return <LandingPage />;
 }
-
