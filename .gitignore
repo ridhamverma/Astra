@@ -18,3 +18,6 @@ build/
 .coverage
 htmlcov/
 
+
+frontend/test-results/
+frontend/playwright-report/

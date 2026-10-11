@@ -6,7 +6,8 @@ import { ApiRequestError, setCsrfToken } from "@/services/api";
 interface AuthState { user: AuthUser | null; loading: boolean; error: string; setUser: (user: AuthUser | null) => void; refresh: () => Promise<void> }
 const Context = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const isPublicLanding = usePathname() === "/";
+  const pathname = usePathname();
+  const isPublicLanding = pathname === "/" || pathname === "/playback-demo";
   const [user, updateUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

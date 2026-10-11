@@ -10,6 +10,11 @@ export type NodeKind = SimulationNode["type"];
 export type EditorNode = Node<
   {
     name: string;
+    sceneTheme?: import("../components/simulator/station-visuals").PlaybackTheme;
+    sceneServing?: number;
+    scenePresent?: number;
+    sceneServiceSlots?: number[];
+    sceneOverflow?: number;
     config: SimulationNode["config"];
     bottleneck?: boolean;
     builderPresentation?: boolean;
@@ -26,6 +31,8 @@ export type EditorEdge = Edge<{
   probability?: number;
   label?: string;
   running?: boolean;
+  playbackActive?: boolean;
+  playbackFollowed?: boolean;
 }> & { pathOptions?: SmoothStepPathOptions };
 
 export const NODE_DEFINITIONS: Record<

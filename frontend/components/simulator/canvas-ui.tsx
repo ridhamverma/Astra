@@ -1,24 +1,21 @@
 "use client";
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import {
-  Background,
-  BackgroundVariant,
   useReactFlow,
   useViewport,
 } from "@xyflow/react";
 import { Plus, Minus, Maximize } from "lucide-react";
 
 export function CanvasGrid() {
-  const { zoom } = useViewport();
-  return (
-    <Background
-      variant={BackgroundVariant.Dots}
-      gap={24 / zoom}
-      size={1.2 / zoom}
-      color="var(--border-hairline)"
-    />
-  );
+  const { x, y, zoom } = useViewport();
+  const id = useId().replace(/:/g, "");
+  return <svg className="operations-grid" aria-hidden="true" width="100%" height="100%">
+    <defs><pattern id={id} width="138.564" height="80" patternUnits="userSpaceOnUse" patternTransform={`translate(${x},${y}) scale(${zoom})`}>
+      <path d="M0 40L69.282 0L138.564 40L69.282 80Z" fill="none" stroke="#8193a5" strokeOpacity=".12" strokeWidth=".8" />
+    </pattern></defs><rect width="100%" height="100%" fill={`url(#${id})`} />
+  </svg>;
 }
+
 export function CanvasZoomControls({
   onFit,
   children,

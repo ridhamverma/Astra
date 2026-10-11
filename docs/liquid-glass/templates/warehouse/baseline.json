@@ -1,0 +1,120 @@
+{
+  "id": "template-warehouse",
+  "name": "Warehouse",
+  "simulation": {
+    "duration": 240,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Order release",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 3
+      },
+      "position": {
+        "x": 0,
+        "y": 160
+      }
+    },
+    {
+      "id": "picking",
+      "type": "process",
+      "name": "Pick order",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "uniform",
+        "mean_service_time": 4.0,
+        "minimum_service_time": 3,
+        "maximum_service_time": 5,
+        "cost_per_resource": 1
+      },
+      "position": {
+        "x": 360,
+        "y": 160
+      }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Packing buffer",
+      "config": {
+        "capacity": null,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 720,
+        "y": 160
+      }
+    },
+    {
+      "id": "packing",
+      "type": "process",
+      "name": "Pack order",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 5.0,
+        "minimum_service_time": 4,
+        "maximum_service_time": 6,
+        "cost_per_resource": 1.5
+      },
+      "position": {
+        "x": 1080,
+        "y": 160
+      }
+    },
+    {
+      "id": "dispatch",
+      "type": "delay",
+      "name": "Dispatch transfer",
+      "config": {
+        "distribution": "constant",
+        "mean_delay": 2
+      },
+      "position": {
+        "x": 1440,
+        "y": 160
+      }
+    },
+    {
+      "id": "shipped",
+      "type": "sink",
+      "name": "Orders dispatched",
+      "config": {},
+      "position": {
+        "x": 1800,
+        "y": 160
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-picking",
+      "source": "arrivals",
+      "target": "picking"
+    },
+    {
+      "id": "e-picking-waiting",
+      "source": "picking",
+      "target": "waiting"
+    },
+    {
+      "id": "e-waiting-packing",
+      "source": "waiting",
+      "target": "packing"
+    },
+    {
+      "id": "e-packing-dispatch",
+      "source": "packing",
+      "target": "dispatch"
+    },
+    {
+      "id": "e-dispatch-shipped",
+      "source": "dispatch",
+      "target": "shipped"
+    }
+  ]
+}

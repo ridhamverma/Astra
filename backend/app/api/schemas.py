@@ -13,6 +13,7 @@ ErrorCode = Literal[
     "failed_simulation",
     "failed_optimization",
     "internal_server_error",
+    "service_unavailable",
     "not_found",
     "ai_unavailable",
     "invalid_ai_output",

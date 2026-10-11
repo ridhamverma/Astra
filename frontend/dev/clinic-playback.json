@@ -1,0 +1,1255 @@
+{
+  "summary": {
+    "total_generated": 8,
+    "total_completed": 8,
+    "total_rejected": 0,
+    "in_system_at_end": 0,
+    "completion_rate": 1.0,
+    "average_cycle_time": 7.75,
+    "maximum_cycle_time": 10.0,
+    "average_waiting_time": 3.5,
+    "maximum_waiting_time": 7.0,
+    "throughput": 20.0
+  },
+  "node_metrics": {
+    "waiting": {
+      "total_arrivals": 8,
+      "total_exited": 8,
+      "rejected_entities": 0,
+      "average_waiting_time": 3.5,
+      "maximum_waiting_time": 7.0,
+      "average_queue_length": 1.1666666666666667,
+      "maximum_queue_length": 4,
+      "waiting_at_end": 0
+    },
+    "nurse": {
+      "resource_count": 1,
+      "services_started": 8,
+      "entities_processed": 8,
+      "total_busy_resource_time": 16.0,
+      "resource_utilization": 0.6666666666666666,
+      "average_service_time": 2.0,
+      "average_waiting_time": 3.5,
+      "maximum_waiting_time": 7.0
+    }
+  },
+  "time_series": {
+    "queue_lengths": {
+      "waiting": [
+        {
+          "time": 0.0,
+          "value": 0
+        },
+        {
+          "time": 1.0,
+          "value": 1
+        },
+        {
+          "time": 2.0,
+          "value": 1
+        },
+        {
+          "time": 3.0,
+          "value": 2
+        },
+        {
+          "time": 4.0,
+          "value": 2
+        },
+        {
+          "time": 5.0,
+          "value": 3
+        },
+        {
+          "time": 6.0,
+          "value": 3
+        },
+        {
+          "time": 7.0,
+          "value": 4
+        },
+        {
+          "time": 8.0,
+          "value": 3
+        },
+        {
+          "time": 10.0,
+          "value": 2
+        },
+        {
+          "time": 12.0,
+          "value": 1
+        },
+        {
+          "time": 14.0,
+          "value": 0
+        },
+        {
+          "time": 24.0,
+          "value": 0
+        }
+      ]
+    },
+    "cumulative_completed": [
+      {
+        "time": 0.0,
+        "value": 0
+      },
+      {
+        "time": 5.0,
+        "value": 1
+      },
+      {
+        "time": 7.0,
+        "value": 2
+      },
+      {
+        "time": 9.0,
+        "value": 3
+      },
+      {
+        "time": 11.0,
+        "value": 4
+      },
+      {
+        "time": 13.0,
+        "value": 5
+      },
+      {
+        "time": 14.0,
+        "value": 6
+      },
+      {
+        "time": 15.0,
+        "value": 7
+      },
+      {
+        "time": 16.0,
+        "value": 8
+      },
+      {
+        "time": 24.0,
+        "value": 8
+      }
+    ]
+  },
+  "events": [
+    {
+      "time": 0.0,
+      "type": "entity_created",
+      "entity_id": "entity-1",
+      "node_id": "entrance"
+    },
+    {
+      "time": 0.0,
+      "type": "node_enter",
+      "entity_id": "entity-1",
+      "node_id": "entrance"
+    },
+    {
+      "time": 0.0,
+      "type": "node_exit",
+      "entity_id": "entity-1",
+      "node_id": "entrance"
+    },
+    {
+      "time": 0.0,
+      "type": "node_enter",
+      "entity_id": "entity-1",
+      "node_id": "waiting"
+    },
+    {
+      "time": 0.0,
+      "type": "queue_enter",
+      "entity_id": "entity-1",
+      "node_id": "waiting"
+    },
+    {
+      "time": 0.0,
+      "type": "service_requested",
+      "entity_id": "entity-1",
+      "node_id": "nurse"
+    },
+    {
+      "time": 0.0,
+      "type": "queue_exit",
+      "entity_id": "entity-1",
+      "node_id": "waiting"
+    },
+    {
+      "time": 0.0,
+      "type": "node_exit",
+      "entity_id": "entity-1",
+      "node_id": "waiting"
+    },
+    {
+      "time": 0.0,
+      "type": "node_enter",
+      "entity_id": "entity-1",
+      "node_id": "nurse"
+    },
+    {
+      "time": 0.0,
+      "type": "service_started",
+      "entity_id": "entity-1",
+      "node_id": "nurse"
+    },
+    {
+      "time": 1.0,
+      "type": "entity_created",
+      "entity_id": "entity-2",
+      "node_id": "entrance"
+    },
+    {
+      "time": 1.0,
+      "type": "node_enter",
+      "entity_id": "entity-2",
+      "node_id": "entrance"
+    },
+    {
+      "time": 1.0,
+      "type": "node_exit",
+      "entity_id": "entity-2",
+      "node_id": "entrance"
+    },
+    {
+      "time": 1.0,
+      "type": "node_enter",
+      "entity_id": "entity-2",
+      "node_id": "waiting"
+    },
+    {
+      "time": 1.0,
+      "type": "queue_enter",
+      "entity_id": "entity-2",
+      "node_id": "waiting"
+    },
+    {
+      "time": 1.0,
+      "type": "queue_wait_started",
+      "entity_id": "entity-2",
+      "node_id": "waiting"
+    },
+    {
+      "time": 1.0,
+      "type": "service_requested",
+      "entity_id": "entity-2",
+      "node_id": "nurse"
+    },
+    {
+      "time": 2.0,
+      "type": "service_completed",
+      "entity_id": "entity-1",
+      "node_id": "nurse"
+    },
+    {
+      "time": 2.0,
+      "type": "node_exit",
+      "entity_id": "entity-1",
+      "node_id": "nurse"
+    },
+    {
+      "time": 2.0,
+      "type": "node_enter",
+      "entity_id": "entity-1",
+      "node_id": "route"
+    },
+    {
+      "time": 2.0,
+      "type": "node_exit",
+      "entity_id": "entity-1",
+      "node_id": "route"
+    },
+    {
+      "time": 2.0,
+      "type": "node_enter",
+      "entity_id": "entity-1",
+      "node_id": "observe"
+    },
+    {
+      "time": 2.0,
+      "type": "entity_created",
+      "entity_id": "entity-3",
+      "node_id": "entrance"
+    },
+    {
+      "time": 2.0,
+      "type": "node_enter",
+      "entity_id": "entity-3",
+      "node_id": "entrance"
+    },
+    {
+      "time": 2.0,
+      "type": "node_exit",
+      "entity_id": "entity-3",
+      "node_id": "entrance"
+    },
+    {
+      "time": 2.0,
+      "type": "node_enter",
+      "entity_id": "entity-3",
+      "node_id": "waiting"
+    },
+    {
+      "time": 2.0,
+      "type": "queue_enter",
+      "entity_id": "entity-3",
+      "node_id": "waiting"
+    },
+    {
+      "time": 2.0,
+      "type": "queue_wait_started",
+      "entity_id": "entity-3",
+      "node_id": "waiting"
+    },
+    {
+      "time": 2.0,
+      "type": "service_requested",
+      "entity_id": "entity-3",
+      "node_id": "nurse"
+    },
+    {
+      "time": 2.0,
+      "type": "queue_exit",
+      "entity_id": "entity-2",
+      "node_id": "waiting"
+    },
+    {
+      "time": 2.0,
+      "type": "node_exit",
+      "entity_id": "entity-2",
+      "node_id": "waiting"
+    },
+    {
+      "time": 2.0,
+      "type": "node_enter",
+      "entity_id": "entity-2",
+      "node_id": "nurse"
+    },
+    {
+      "time": 2.0,
+      "type": "service_started",
+      "entity_id": "entity-2",
+      "node_id": "nurse"
+    },
+    {
+      "time": 3.0,
+      "type": "entity_created",
+      "entity_id": "entity-4",
+      "node_id": "entrance"
+    },
+    {
+      "time": 3.0,
+      "type": "node_enter",
+      "entity_id": "entity-4",
+      "node_id": "entrance"
+    },
+    {
+      "time": 3.0,
+      "type": "node_exit",
+      "entity_id": "entity-4",
+      "node_id": "entrance"
+    },
+    {
+      "time": 3.0,
+      "type": "node_enter",
+      "entity_id": "entity-4",
+      "node_id": "waiting"
+    },
+    {
+      "time": 3.0,
+      "type": "queue_enter",
+      "entity_id": "entity-4",
+      "node_id": "waiting"
+    },
+    {
+      "time": 3.0,
+      "type": "queue_wait_started",
+      "entity_id": "entity-4",
+      "node_id": "waiting"
+    },
+    {
+      "time": 3.0,
+      "type": "service_requested",
+      "entity_id": "entity-4",
+      "node_id": "nurse"
+    },
+    {
+      "time": 4.0,
+      "type": "service_completed",
+      "entity_id": "entity-2",
+      "node_id": "nurse"
+    },
+    {
+      "time": 4.0,
+      "type": "node_exit",
+      "entity_id": "entity-2",
+      "node_id": "nurse"
+    },
+    {
+      "time": 4.0,
+      "type": "node_enter",
+      "entity_id": "entity-2",
+      "node_id": "route"
+    },
+    {
+      "time": 4.0,
+      "type": "node_exit",
+      "entity_id": "entity-2",
+      "node_id": "route"
+    },
+    {
+      "time": 4.0,
+      "type": "node_enter",
+      "entity_id": "entity-2",
+      "node_id": "observe"
+    },
+    {
+      "time": 4.0,
+      "type": "entity_created",
+      "entity_id": "entity-5",
+      "node_id": "entrance"
+    },
+    {
+      "time": 4.0,
+      "type": "node_enter",
+      "entity_id": "entity-5",
+      "node_id": "entrance"
+    },
+    {
+      "time": 4.0,
+      "type": "node_exit",
+      "entity_id": "entity-5",
+      "node_id": "entrance"
+    },
+    {
+      "time": 4.0,
+      "type": "node_enter",
+      "entity_id": "entity-5",
+      "node_id": "waiting"
+    },
+    {
+      "time": 4.0,
+      "type": "queue_enter",
+      "entity_id": "entity-5",
+      "node_id": "waiting"
+    },
+    {
+      "time": 4.0,
+      "type": "queue_wait_started",
+      "entity_id": "entity-5",
+      "node_id": "waiting"
+    },
+    {
+      "time": 4.0,
+      "type": "service_requested",
+      "entity_id": "entity-5",
+      "node_id": "nurse"
+    },
+    {
+      "time": 4.0,
+      "type": "queue_exit",
+      "entity_id": "entity-3",
+      "node_id": "waiting"
+    },
+    {
+      "time": 4.0,
+      "type": "node_exit",
+      "entity_id": "entity-3",
+      "node_id": "waiting"
+    },
+    {
+      "time": 4.0,
+      "type": "node_enter",
+      "entity_id": "entity-3",
+      "node_id": "nurse"
+    },
+    {
+      "time": 4.0,
+      "type": "service_started",
+      "entity_id": "entity-3",
+      "node_id": "nurse"
+    },
+    {
+      "time": 5.0,
+      "type": "node_exit",
+      "entity_id": "entity-1",
+      "node_id": "observe"
+    },
+    {
+      "time": 5.0,
+      "type": "node_enter",
+      "entity_id": "entity-1",
+      "node_id": "exit"
+    },
+    {
+      "time": 5.0,
+      "type": "node_exit",
+      "entity_id": "entity-1",
+      "node_id": "exit"
+    },
+    {
+      "time": 5.0,
+      "type": "entity_completed",
+      "entity_id": "entity-1",
+      "node_id": "exit"
+    },
+    {
+      "time": 5.0,
+      "type": "entity_created",
+      "entity_id": "entity-6",
+      "node_id": "entrance"
+    },
+    {
+      "time": 5.0,
+      "type": "node_enter",
+      "entity_id": "entity-6",
+      "node_id": "entrance"
+    },
+    {
+      "time": 5.0,
+      "type": "node_exit",
+      "entity_id": "entity-6",
+      "node_id": "entrance"
+    },
+    {
+      "time": 5.0,
+      "type": "node_enter",
+      "entity_id": "entity-6",
+      "node_id": "waiting"
+    },
+    {
+      "time": 5.0,
+      "type": "queue_enter",
+      "entity_id": "entity-6",
+      "node_id": "waiting"
+    },
+    {
+      "time": 5.0,
+      "type": "queue_wait_started",
+      "entity_id": "entity-6",
+      "node_id": "waiting"
+    },
+    {
+      "time": 5.0,
+      "type": "service_requested",
+      "entity_id": "entity-6",
+      "node_id": "nurse"
+    },
+    {
+      "time": 6.0,
+      "type": "service_completed",
+      "entity_id": "entity-3",
+      "node_id": "nurse"
+    },
+    {
+      "time": 6.0,
+      "type": "node_exit",
+      "entity_id": "entity-3",
+      "node_id": "nurse"
+    },
+    {
+      "time": 6.0,
+      "type": "node_enter",
+      "entity_id": "entity-3",
+      "node_id": "route"
+    },
+    {
+      "time": 6.0,
+      "type": "node_exit",
+      "entity_id": "entity-3",
+      "node_id": "route"
+    },
+    {
+      "time": 6.0,
+      "type": "node_enter",
+      "entity_id": "entity-3",
+      "node_id": "observe"
+    },
+    {
+      "time": 6.0,
+      "type": "entity_created",
+      "entity_id": "entity-7",
+      "node_id": "entrance"
+    },
+    {
+      "time": 6.0,
+      "type": "node_enter",
+      "entity_id": "entity-7",
+      "node_id": "entrance"
+    },
+    {
+      "time": 6.0,
+      "type": "node_exit",
+      "entity_id": "entity-7",
+      "node_id": "entrance"
+    },
+    {
+      "time": 6.0,
+      "type": "node_enter",
+      "entity_id": "entity-7",
+      "node_id": "waiting"
+    },
+    {
+      "time": 6.0,
+      "type": "queue_enter",
+      "entity_id": "entity-7",
+      "node_id": "waiting"
+    },
+    {
+      "time": 6.0,
+      "type": "queue_wait_started",
+      "entity_id": "entity-7",
+      "node_id": "waiting"
+    },
+    {
+      "time": 6.0,
+      "type": "service_requested",
+      "entity_id": "entity-7",
+      "node_id": "nurse"
+    },
+    {
+      "time": 6.0,
+      "type": "queue_exit",
+      "entity_id": "entity-4",
+      "node_id": "waiting"
+    },
+    {
+      "time": 6.0,
+      "type": "node_exit",
+      "entity_id": "entity-4",
+      "node_id": "waiting"
+    },
+    {
+      "time": 6.0,
+      "type": "node_enter",
+      "entity_id": "entity-4",
+      "node_id": "nurse"
+    },
+    {
+      "time": 6.0,
+      "type": "service_started",
+      "entity_id": "entity-4",
+      "node_id": "nurse"
+    },
+    {
+      "time": 7.0,
+      "type": "node_exit",
+      "entity_id": "entity-2",
+      "node_id": "observe"
+    },
+    {
+      "time": 7.0,
+      "type": "node_enter",
+      "entity_id": "entity-2",
+      "node_id": "exit"
+    },
+    {
+      "time": 7.0,
+      "type": "node_exit",
+      "entity_id": "entity-2",
+      "node_id": "exit"
+    },
+    {
+      "time": 7.0,
+      "type": "entity_completed",
+      "entity_id": "entity-2",
+      "node_id": "exit"
+    },
+    {
+      "time": 7.0,
+      "type": "entity_created",
+      "entity_id": "entity-8",
+      "node_id": "entrance"
+    },
+    {
+      "time": 7.0,
+      "type": "node_enter",
+      "entity_id": "entity-8",
+      "node_id": "entrance"
+    },
+    {
+      "time": 7.0,
+      "type": "node_exit",
+      "entity_id": "entity-8",
+      "node_id": "entrance"
+    },
+    {
+      "time": 7.0,
+      "type": "node_enter",
+      "entity_id": "entity-8",
+      "node_id": "waiting"
+    },
+    {
+      "time": 7.0,
+      "type": "queue_enter",
+      "entity_id": "entity-8",
+      "node_id": "waiting"
+    },
+    {
+      "time": 7.0,
+      "type": "queue_wait_started",
+      "entity_id": "entity-8",
+      "node_id": "waiting"
+    },
+    {
+      "time": 7.0,
+      "type": "service_requested",
+      "entity_id": "entity-8",
+      "node_id": "nurse"
+    },
+    {
+      "time": 8.0,
+      "type": "service_completed",
+      "entity_id": "entity-4",
+      "node_id": "nurse"
+    },
+    {
+      "time": 8.0,
+      "type": "node_exit",
+      "entity_id": "entity-4",
+      "node_id": "nurse"
+    },
+    {
+      "time": 8.0,
+      "type": "node_enter",
+      "entity_id": "entity-4",
+      "node_id": "route"
+    },
+    {
+      "time": 8.0,
+      "type": "node_exit",
+      "entity_id": "entity-4",
+      "node_id": "route"
+    },
+    {
+      "time": 8.0,
+      "type": "node_enter",
+      "entity_id": "entity-4",
+      "node_id": "observe"
+    },
+    {
+      "time": 8.0,
+      "type": "queue_exit",
+      "entity_id": "entity-5",
+      "node_id": "waiting"
+    },
+    {
+      "time": 8.0,
+      "type": "node_exit",
+      "entity_id": "entity-5",
+      "node_id": "waiting"
+    },
+    {
+      "time": 8.0,
+      "type": "node_enter",
+      "entity_id": "entity-5",
+      "node_id": "nurse"
+    },
+    {
+      "time": 8.0,
+      "type": "service_started",
+      "entity_id": "entity-5",
+      "node_id": "nurse"
+    },
+    {
+      "time": 9.0,
+      "type": "node_exit",
+      "entity_id": "entity-3",
+      "node_id": "observe"
+    },
+    {
+      "time": 9.0,
+      "type": "node_enter",
+      "entity_id": "entity-3",
+      "node_id": "exit"
+    },
+    {
+      "time": 9.0,
+      "type": "node_exit",
+      "entity_id": "entity-3",
+      "node_id": "exit"
+    },
+    {
+      "time": 9.0,
+      "type": "entity_completed",
+      "entity_id": "entity-3",
+      "node_id": "exit"
+    },
+    {
+      "time": 10.0,
+      "type": "service_completed",
+      "entity_id": "entity-5",
+      "node_id": "nurse"
+    },
+    {
+      "time": 10.0,
+      "type": "node_exit",
+      "entity_id": "entity-5",
+      "node_id": "nurse"
+    },
+    {
+      "time": 10.0,
+      "type": "node_enter",
+      "entity_id": "entity-5",
+      "node_id": "route"
+    },
+    {
+      "time": 10.0,
+      "type": "node_exit",
+      "entity_id": "entity-5",
+      "node_id": "route"
+    },
+    {
+      "time": 10.0,
+      "type": "node_enter",
+      "entity_id": "entity-5",
+      "node_id": "observe"
+    },
+    {
+      "time": 10.0,
+      "type": "queue_exit",
+      "entity_id": "entity-6",
+      "node_id": "waiting"
+    },
+    {
+      "time": 10.0,
+      "type": "node_exit",
+      "entity_id": "entity-6",
+      "node_id": "waiting"
+    },
+    {
+      "time": 10.0,
+      "type": "node_enter",
+      "entity_id": "entity-6",
+      "node_id": "nurse"
+    },
+    {
+      "time": 10.0,
+      "type": "service_started",
+      "entity_id": "entity-6",
+      "node_id": "nurse"
+    },
+    {
+      "time": 11.0,
+      "type": "node_exit",
+      "entity_id": "entity-4",
+      "node_id": "observe"
+    },
+    {
+      "time": 11.0,
+      "type": "node_enter",
+      "entity_id": "entity-4",
+      "node_id": "exit"
+    },
+    {
+      "time": 11.0,
+      "type": "node_exit",
+      "entity_id": "entity-4",
+      "node_id": "exit"
+    },
+    {
+      "time": 11.0,
+      "type": "entity_completed",
+      "entity_id": "entity-4",
+      "node_id": "exit"
+    },
+    {
+      "time": 12.0,
+      "type": "service_completed",
+      "entity_id": "entity-6",
+      "node_id": "nurse"
+    },
+    {
+      "time": 12.0,
+      "type": "node_exit",
+      "entity_id": "entity-6",
+      "node_id": "nurse"
+    },
+    {
+      "time": 12.0,
+      "type": "node_enter",
+      "entity_id": "entity-6",
+      "node_id": "route"
+    },
+    {
+      "time": 12.0,
+      "type": "node_exit",
+      "entity_id": "entity-6",
+      "node_id": "route"
+    },
+    {
+      "time": 12.0,
+      "type": "node_enter",
+      "entity_id": "entity-6",
+      "node_id": "observe"
+    },
+    {
+      "time": 12.0,
+      "type": "queue_exit",
+      "entity_id": "entity-7",
+      "node_id": "waiting"
+    },
+    {
+      "time": 12.0,
+      "type": "node_exit",
+      "entity_id": "entity-7",
+      "node_id": "waiting"
+    },
+    {
+      "time": 12.0,
+      "type": "node_enter",
+      "entity_id": "entity-7",
+      "node_id": "nurse"
+    },
+    {
+      "time": 12.0,
+      "type": "service_started",
+      "entity_id": "entity-7",
+      "node_id": "nurse"
+    },
+    {
+      "time": 13.0,
+      "type": "node_exit",
+      "entity_id": "entity-5",
+      "node_id": "observe"
+    },
+    {
+      "time": 13.0,
+      "type": "node_enter",
+      "entity_id": "entity-5",
+      "node_id": "exit"
+    },
+    {
+      "time": 13.0,
+      "type": "node_exit",
+      "entity_id": "entity-5",
+      "node_id": "exit"
+    },
+    {
+      "time": 13.0,
+      "type": "entity_completed",
+      "entity_id": "entity-5",
+      "node_id": "exit"
+    },
+    {
+      "time": 14.0,
+      "type": "service_completed",
+      "entity_id": "entity-7",
+      "node_id": "nurse"
+    },
+    {
+      "time": 14.0,
+      "type": "node_exit",
+      "entity_id": "entity-7",
+      "node_id": "nurse"
+    },
+    {
+      "time": 14.0,
+      "type": "node_enter",
+      "entity_id": "entity-7",
+      "node_id": "route"
+    },
+    {
+      "time": 14.0,
+      "type": "node_exit",
+      "entity_id": "entity-7",
+      "node_id": "route"
+    },
+    {
+      "time": 14.0,
+      "type": "node_enter",
+      "entity_id": "entity-7",
+      "node_id": "exit"
+    },
+    {
+      "time": 14.0,
+      "type": "node_exit",
+      "entity_id": "entity-7",
+      "node_id": "exit"
+    },
+    {
+      "time": 14.0,
+      "type": "entity_completed",
+      "entity_id": "entity-7",
+      "node_id": "exit"
+    },
+    {
+      "time": 14.0,
+      "type": "queue_exit",
+      "entity_id": "entity-8",
+      "node_id": "waiting"
+    },
+    {
+      "time": 14.0,
+      "type": "node_exit",
+      "entity_id": "entity-8",
+      "node_id": "waiting"
+    },
+    {
+      "time": 14.0,
+      "type": "node_enter",
+      "entity_id": "entity-8",
+      "node_id": "nurse"
+    },
+    {
+      "time": 14.0,
+      "type": "service_started",
+      "entity_id": "entity-8",
+      "node_id": "nurse"
+    },
+    {
+      "time": 15.0,
+      "type": "node_exit",
+      "entity_id": "entity-6",
+      "node_id": "observe"
+    },
+    {
+      "time": 15.0,
+      "type": "node_enter",
+      "entity_id": "entity-6",
+      "node_id": "exit"
+    },
+    {
+      "time": 15.0,
+      "type": "node_exit",
+      "entity_id": "entity-6",
+      "node_id": "exit"
+    },
+    {
+      "time": 15.0,
+      "type": "entity_completed",
+      "entity_id": "entity-6",
+      "node_id": "exit"
+    },
+    {
+      "time": 16.0,
+      "type": "service_completed",
+      "entity_id": "entity-8",
+      "node_id": "nurse"
+    },
+    {
+      "time": 16.0,
+      "type": "node_exit",
+      "entity_id": "entity-8",
+      "node_id": "nurse"
+    },
+    {
+      "time": 16.0,
+      "type": "node_enter",
+      "entity_id": "entity-8",
+      "node_id": "route"
+    },
+    {
+      "time": 16.0,
+      "type": "node_exit",
+      "entity_id": "entity-8",
+      "node_id": "route"
+    },
+    {
+      "time": 16.0,
+      "type": "node_enter",
+      "entity_id": "entity-8",
+      "node_id": "exit"
+    },
+    {
+      "time": 16.0,
+      "type": "node_exit",
+      "entity_id": "entity-8",
+      "node_id": "exit"
+    },
+    {
+      "time": 16.0,
+      "type": "entity_completed",
+      "entity_id": "entity-8",
+      "node_id": "exit"
+    }
+  ],
+  "bottleneck_analysis": {
+    "method": "utilization_pressure_v1",
+    "status": "detected",
+    "score": 0.4242424242424242,
+    "reasons": [
+      "Nurse assessment utilization is 66.67%.",
+      "Mean resource waiting time is 3.50 min; maximum is 7.00 min.",
+      "Direct upstream Queues average 1.17 waiting entities in total; the largest individual queue peak is 4.",
+      "0 entities remain in those Queues at the simulation horizon; 0 were rejected.",
+      "Score 0.4242 = utilization 0.6667 \u00d7 congestion pressure 0.6364."
+    ],
+    "ranked": [
+      {
+        "node_id": "nurse",
+        "name": "Nurse assessment",
+        "score": 0.4242424242424242,
+        "evidence": {
+          "utilization": 0.6666666666666666,
+          "average_waiting_time": 3.5,
+          "maximum_waiting_time": 7.0,
+          "reference_service_time": 2.0,
+          "service_time_basis": "measured",
+          "average_queue_length": 1.1666666666666667,
+          "maximum_queue_length": 4,
+          "waiting_at_end": 0,
+          "rejected_entities": 0,
+          "normalized_waiting": 0.6363636363636364,
+          "normalized_queue": 0.5384615384615384,
+          "rejection_fraction": 0.0,
+          "congestion_pressure": 0.6363636363636364,
+          "upstream_queues": [
+            {
+              "node_id": "waiting",
+              "name": "Reception waiting",
+              "average_waiting_time": 3.5,
+              "maximum_waiting_time": 7.0,
+              "average_queue_length": 1.1666666666666667,
+              "maximum_queue_length": 4,
+              "waiting_at_end": 0,
+              "rejected_entities": 0,
+              "total_arrivals": 8
+            }
+          ]
+        },
+        "reasons": [
+          "Nurse assessment utilization is 66.67%.",
+          "Mean resource waiting time is 3.50 min; maximum is 7.00 min.",
+          "Direct upstream Queues average 1.17 waiting entities in total; the largest individual queue peak is 4.",
+          "0 entities remain in those Queues at the simulation horizon; 0 were rejected.",
+          "Score 0.4242 = utilization 0.6667 \u00d7 congestion pressure 0.6364."
+        ]
+      }
+    ],
+    "notes": [
+      "Waiting averages exclude unfinished waits; upstream Queue backlog and horizon counts include remaining waiters. Direct Process pending-request counts are not available without an explicit Queue."
+    ],
+    "primaryBottleneck": "nurse"
+  },
+  "id": "development-clinic-42",
+  "project_id": "development-only",
+  "scenario_id": null,
+  "model_version": 1,
+  "seed": 42,
+  "duration": 24,
+  "created_at": "2026-10-09T00:00:00Z",
+  "model": {
+    "id": "playback-clinic",
+    "name": "Clinic playback example",
+    "simulation": {
+      "duration": 24,
+      "seed": 42
+    },
+    "nodes": [
+      {
+        "id": "entrance",
+        "type": "source",
+        "name": "Clinic entrance",
+        "position": {
+          "x": 0,
+          "y": 180
+        },
+        "config": {
+          "distribution": "constant",
+          "mean_interarrival_time": 1,
+          "max_entities": 8
+        }
+      },
+      {
+        "id": "waiting",
+        "type": "queue",
+        "name": "Reception waiting",
+        "position": {
+          "x": 360,
+          "y": 180
+        },
+        "config": {
+          "capacity": null,
+          "discipline": "fifo"
+        }
+      },
+      {
+        "id": "nurse",
+        "type": "process",
+        "name": "Nurse assessment",
+        "position": {
+          "x": 720,
+          "y": 180
+        },
+        "config": {
+          "resource_count": 1,
+          "service_distribution": "constant",
+          "mean_service_time": 2
+        }
+      },
+      {
+        "id": "route",
+        "type": "decision",
+        "name": "Follow-up needed?",
+        "position": {
+          "x": 1080,
+          "y": 180
+        },
+        "config": {
+          "routing": "probability"
+        }
+      },
+      {
+        "id": "observe",
+        "type": "delay",
+        "name": "Observation lounge",
+        "position": {
+          "x": 1440,
+          "y": 0
+        },
+        "config": {
+          "distribution": "constant",
+          "mean_delay": 3
+        }
+      },
+      {
+        "id": "exit",
+        "type": "sink",
+        "name": "Clinic exit",
+        "position": {
+          "x": 1800,
+          "y": 180
+        },
+        "config": {}
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "entrance",
+        "target": "waiting"
+      },
+      {
+        "id": "e2",
+        "source": "waiting",
+        "target": "nurse"
+      },
+      {
+        "id": "e3",
+        "source": "nurse",
+        "target": "route"
+      },
+      {
+        "id": "yes",
+        "source": "route",
+        "target": "observe",
+        "sourceHandle": "yes",
+        "probability": 0.5
+      },
+      {
+        "id": "no",
+        "source": "route",
+        "target": "exit",
+        "sourceHandle": "no",
+        "probability": 0.5
+      },
+      {
+        "id": "e6",
+        "source": "observe",
+        "target": "exit"
+      }
+    ]
+  }
+}

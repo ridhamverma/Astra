@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session
 
 from app.api.auth import get_current_user
 from app.api.schemas import ApiIssue
-from app.api.simulation_validation import ApiProblem, validate_request_payload
+from app.api.simulation_validation import ApiProblem, validate_request_payload, validate_draft_payload
+from app.schemas.drafts import SimulationDraft
 from app.database.session import get_db
 from app.models import Project, SimulationModelVersion, SimulationRun, User
 from app.schemas.projects import ProjectCreate, ProjectDetail, ProjectSummary, ProjectUpdate, RunCreate, RunRead, RunPlayback
@@ -41,7 +42,7 @@ def _project(db: Session, project_id: UUID, user_id: UUID, *, lock: bool = False
 def _latest(db: Session, project_id: UUID) -> SimulationModelVersion | None:
     return db.scalar(
         select(SimulationModelVersion)
-        .where(SimulationModelVersion.project_id == project_id)
+        .where(SimulationModelVersion.project_id == project_id, SimulationModelVersion.is_scenario.is_(False))
         .order_by(SimulationModelVersion.version.desc())
         .limit(1)
     )
@@ -70,12 +71,14 @@ def _project_read(db: Session, project: Project) -> ProjectDetail:
     )
 
 
-def _save_model(db: Session, project: Project, model: SimulationModel) -> SimulationModelVersion:
-    latest = _latest(db, project.id)
+def _save_model(db: Session, project: Project, model: SimulationModel, *, is_scenario: bool = False) -> SimulationModelVersion:
+    # Project locks serialize allocation across both independent snapshot streams.
+    number = db.scalar(select(func.max(SimulationModelVersion.version)).where(SimulationModelVersion.project_id == project.id))
     version = SimulationModelVersion(
         project_id=project.id,
-        version=1 if latest is None else latest.version + 1,
+        version=(number or 0) + 1,
         graph=model.model_dump(mode="json"),
+        is_scenario=is_scenario,
     )
     db.add(version)
     project.updated_at = datetime.now(timezone.utc)
@@ -93,6 +96,7 @@ def _run_read(db: Session, run: SimulationRun) -> RunRead:
     model = SimulationModel.model_validate(version.graph)
     metrics = METRICS_ADAPTER.validate_python(run.node_metrics)
     return RunRead(
+        is_scenario=version.is_scenario,
         id=run.id,
         scenario_id=run.scenario_id,
         project_id=run.project_id,
@@ -115,7 +119,7 @@ def list_projects(db: Session = Depends(get_db), user: User = Depends(get_curren
     ids = [project.id for project in projects]
     # Batch library data rather than loading full run histories per card.
     latest_numbers = select(SimulationModelVersion.project_id, func.max(SimulationModelVersion.version).label("version")).where(
-        SimulationModelVersion.project_id.in_(ids),
+        SimulationModelVersion.project_id.in_(ids), SimulationModelVersion.is_scenario.is_(False),
     ).group_by(SimulationModelVersion.project_id).subquery()
     versions = db.scalars(select(SimulationModelVersion).join(latest_numbers, (
         (SimulationModelVersion.project_id == latest_numbers.c.project_id) &
@@ -127,8 +131,11 @@ def list_projects(db: Session = Depends(get_db), user: User = Depends(get_curren
     activity = {row[0]: row[1:] for row in db.execute(select(
         SimulationRun.project_id, func.count(SimulationRun.id), func.max(SimulationRun.created_at),
     ).where(SimulationRun.project_id.in_(ids)).group_by(SimulationRun.project_id))}
-    completed_versions = set(db.execute(select(SimulationRun.project_id, SimulationRun.version).where(
+    completed_versions = set(db.execute(select(SimulationRun.project_id, SimulationRun.version).join(SimulationModelVersion, (
+        (SimulationModelVersion.project_id == SimulationRun.project_id) & (SimulationModelVersion.version == SimulationRun.version)
+    )).where(
         SimulationRun.project_id.in_(ids), SimulationRun.scenario_id.is_(None),
+        SimulationModelVersion.is_scenario.is_(False),
     ).distinct()).all())
     return [ProjectSummary(
         id=project.id, name=project.name, description=project.description, user_id=project.user_id,
@@ -145,14 +152,14 @@ def record_project_access(project_id: UUID, db: Session = Depends(get_db), user:
     project = _project(db, project_id, user.id)
     # SQLAlchemy's onupdate must not turn an open into a model edit.
     db.execute(Project.__table__.update().where(Project.id == project.id).values(
-        last_accessed_at=datetime.now(timezone.utc), updated_at=project.updated_at,
+        last_accessed_at=datetime.now(timezone.utc), updated_at=Project.updated_at,
     ))
     db.commit()
 
 
 @router.post("/projects", response_model=ProjectDetail, status_code=status.HTTP_201_CREATED)
 def create_project(payload: ProjectCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> ProjectDetail:
-    model = validate_request_payload(payload.model) if payload.model is not None else None
+    model = validate_draft_payload(payload.model) if payload.model is not None else None
     project = Project(name=payload.name, description=payload.description, user_id=user.id)
     db.add(project)
     db.flush()
@@ -167,6 +174,27 @@ def get_project(project_id: UUID, db: Session = Depends(get_db), user: User = De
     return _project_read(db, _project(db, project_id, user.id))
 
 
+@router.get("/projects/{project_id}/versions", response_model=list[int])
+def list_model_versions(project_id: UUID, db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> list[int]:
+    """Read-only immutable history, scoped to the project's owner."""
+    _project(db, project_id, user.id)
+    return list(db.scalars(select(SimulationModelVersion.version).where(
+        SimulationModelVersion.project_id == project_id, SimulationModelVersion.is_scenario.is_(False),
+    ).order_by(SimulationModelVersion.version.desc())).all())
+
+
+@router.get("/projects/{project_id}/versions/{version_number}", response_model=SimulationDraft)
+def get_model_version(project_id: UUID, version_number: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> SimulationDraft:
+    _project(db, project_id, user.id)
+    version = db.scalar(select(SimulationModelVersion).where(
+        SimulationModelVersion.project_id == project_id,
+        SimulationModelVersion.version == version_number,
+    ))
+    if version is None:
+        raise _not_found("Model version")
+    return validate_draft_payload(version.graph)
+
+
 @router.put("/projects/{project_id}", response_model=ProjectDetail)
 def update_project(project_id: UUID, payload: ProjectUpdate, db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> ProjectDetail:
     changes = payload.model_fields_set
@@ -174,13 +202,16 @@ def update_project(project_id: UUID, payload: ProjectUpdate, db: Session = Depen
         raise ApiProblem("invalid_configuration", "Project name cannot be null", [ApiIssue(code="invalid_configuration", path="name", message="Provide a project name")])
     if "model" in changes and payload.model is None:
         raise ApiProblem("invalid_configuration", "Model cannot be null", [ApiIssue(code="invalid_configuration", path="model", message="Provide an Astra model")])
-    model = validate_request_payload(payload.model) if "model" in changes else None
+    model = validate_draft_payload(payload.model) if "model" in changes else None
     project = _project(db, project_id, user.id, lock=True)
+    latest = _latest(db, project_id)
+    if model is not None and payload.expected_version is not None and (latest.version if latest else 0) != payload.expected_version:
+        raise ApiProblem("conflict", "This project was changed in another session. Reload it before saving.", [], status_code=409)
     if "name" in changes:
         project.name = payload.name
     if "description" in changes:
         project.description = payload.description
-    if model is not None:
+    if model is not None and (latest is None or latest.graph != model.model_dump(mode="json")):
         _save_model(db, project, model)
     elif changes:
         project.updated_at = datetime.now(timezone.utc)
@@ -210,6 +241,8 @@ def create_run(project_id: UUID, payload: RunCreate | None = None, db: Session =
         )
     if version is None:
         raise _not_found("Model version")
+    if version.is_scenario:
+        raise ApiProblem("invalid_configuration", "Run scenario snapshots through their scenario endpoint", [], status_code=409)
     return _execute_run(db, version, include_timeline=bool(payload and payload.include_timeline))
 
 

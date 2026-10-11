@@ -10,9 +10,8 @@ import json
 from pathlib import Path
 from uuid import uuid4
 
-import pytest
 # pyrefly: ignore [missing-import]
-from test_persistence import test_database, client_for
+from test_persistence import test_database as test_database, client_for
 
 
 def load_model(name: str = "doctor-capacity.json") -> dict:

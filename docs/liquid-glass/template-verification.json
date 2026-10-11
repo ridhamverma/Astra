@@ -1,0 +1,832 @@
+{
+  "bank": {
+    "baseline": {
+      "milliseconds": 2.94,
+      "summary": {
+        "total_generated": 119,
+        "total_completed": 79,
+        "total_rejected": 33,
+        "in_system_at_end": 7,
+        "completion_rate": 0.6638655462184874,
+        "average_cycle_time": 19.597813295418437,
+        "maximum_cycle_time": 25.04838182933564,
+        "average_waiting_time": 13.633686829841587,
+        "maximum_waiting_time": 19.221984944087325,
+        "throughput": 19.75
+      },
+      "bottleneck": "counter",
+      "nodes": {
+        "waiting": {
+          "total_arrivals": 119,
+          "total_exited": 81,
+          "rejected_entities": 33,
+          "average_waiting_time": 13.567952342109484,
+          "maximum_waiting_time": 19.221984944087325,
+          "average_queue_length": 4.710455897001169,
+          "maximum_queue_length": 6,
+          "waiting_at_end": 5
+        },
+        "counter": {
+          "resource_count": 2,
+          "services_started": 81,
+          "entities_processed": 79,
+          "total_busy_resource_time": 479.7196163722502,
+          "resource_utilization": 0.9994158674421879,
+          "average_service_time": 5.964126465576851,
+          "average_waiting_time": 13.567952342109484,
+          "maximum_waiting_time": 19.221984944087325
+        }
+      }
+    },
+    "add-one": {
+      "milliseconds": 2.74,
+      "summary": {
+        "total_generated": 119,
+        "total_completed": 111,
+        "total_rejected": 5,
+        "in_system_at_end": 3,
+        "completion_rate": 0.9327731092436975,
+        "average_cycle_time": 9.995105224716125,
+        "maximum_cycle_time": 18.33649877678286,
+        "average_waiting_time": 4.022950823686088,
+        "maximum_waiting_time": 12.633822681737684,
+        "throughput": 27.75
+      },
+      "bottleneck": "counter",
+      "nodes": {
+        "waiting": {
+          "total_arrivals": 119,
+          "total_exited": 114,
+          "rejected_entities": 5,
+          "average_waiting_time": 3.9170836967469804,
+          "maximum_waiting_time": 12.633822681737684,
+          "average_queue_length": 1.8606147559548165,
+          "maximum_queue_length": 6,
+          "waiting_at_end": 0
+        },
+        "counter": {
+          "resource_count": 3,
+          "services_started": 114,
+          "entities_processed": 111,
+          "total_busy_resource_time": 669.1063034167953,
+          "resource_utilization": 0.9293143103011046,
+          "average_service_time": 5.972154401030038,
+          "average_waiting_time": 3.9170836967469804,
+          "maximum_waiting_time": 12.633822681737684
+        }
+      }
+    },
+    "alternative": {
+      "milliseconds": 2.41,
+      "summary": {
+        "total_generated": 119,
+        "total_completed": 79,
+        "total_rejected": 21,
+        "in_system_at_end": 19,
+        "completion_rate": 0.6638655462184874,
+        "average_cycle_time": 44.92303066621163,
+        "maximum_cycle_time": 63.520768373305685,
+        "average_waiting_time": 38.95890420063478,
+        "maximum_waiting_time": 57.41934437768859,
+        "throughput": 19.75
+      },
+      "bottleneck": "counter",
+      "nodes": {
+        "waiting": {
+          "total_arrivals": 119,
+          "total_exited": 81,
+          "rejected_entities": 21,
+          "average_waiting_time": 39.29519940034228,
+          "maximum_waiting_time": 57.41934437768859,
+          "average_queue_length": 14.983373717317699,
+          "maximum_queue_length": 18,
+          "waiting_at_end": 17
+        },
+        "counter": {
+          "resource_count": 2,
+          "services_started": 81,
+          "entities_processed": 79,
+          "total_busy_resource_time": 479.7196163722502,
+          "resource_utilization": 0.9994158674421879,
+          "average_service_time": 5.964126465576851,
+          "average_waiting_time": 39.29519940034228,
+          "maximum_waiting_time": 57.41934437768859
+        }
+      }
+    },
+    "optimization": {
+      "resources": 4,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "runs": 9,
+      "candidates": [
+        {
+          "resources": 2,
+          "status": "infeasible",
+          "mean": 13.365892495354311
+        },
+        {
+          "resources": 3,
+          "status": "infeasible",
+          "mean": 4.86121195184503
+        },
+        {
+          "resources": 4,
+          "status": "feasible",
+          "mean": 1.1345936724876093
+        }
+      ]
+    }
+  },
+  "customer-service": {
+    "baseline": {
+      "milliseconds": 2.44,
+      "summary": {
+        "total_generated": 99,
+        "total_completed": 88,
+        "total_rejected": 0,
+        "in_system_at_end": 11,
+        "completion_rate": 0.8888888888888888,
+        "average_cycle_time": 21.43919732579069,
+        "maximum_cycle_time": 115.69224169422925,
+        "average_waiting_time": 16.800610239909176,
+        "maximum_waiting_time": 104.12878008360043,
+        "throughput": 22.0
+      },
+      "bottleneck": "specialist",
+      "nodes": {
+        "agents": {
+          "resource_count": 2,
+          "services_started": 99,
+          "entities_processed": 99,
+          "total_busy_resource_time": 197.76426879815034,
+          "resource_utilization": 0.4120088933294799,
+          "average_service_time": 1.9976188767489933,
+          "average_waiting_time": 0.3955997590828017,
+          "maximum_waiting_time": 3.77714956477851
+        },
+        "waiting": {
+          "total_arrivals": 35,
+          "total_exited": 25,
+          "rejected_entities": 0,
+          "average_waiting_time": 61.37487251440929,
+          "maximum_waiting_time": 104.12878008360043,
+          "average_queue_length": 7.684986846646278,
+          "maximum_queue_length": 11,
+          "waiting_at_end": 10
+        },
+        "specialist": {
+          "resource_count": 1,
+          "services_started": 25,
+          "entities_processed": 24,
+          "total_busy_resource_time": 237.99039715699686,
+          "resource_utilization": 0.9916266548208202,
+          "average_service_time": 9.716139005004523,
+          "average_waiting_time": 61.37487251440929,
+          "maximum_waiting_time": 104.12878008360043
+        }
+      }
+    },
+    "add-one": {
+      "milliseconds": 2.42,
+      "summary": {
+        "total_generated": 99,
+        "total_completed": 97,
+        "total_rejected": 0,
+        "in_system_at_end": 2,
+        "completion_rate": 0.9797979797979798,
+        "average_cycle_time": 7.4513106012001025,
+        "maximum_cycle_time": 30.952097243901186,
+        "average_waiting_time": 2.0772589734187275,
+        "maximum_waiting_time": 19.81897727894165,
+        "throughput": 24.25
+      },
+      "bottleneck": "specialist",
+      "nodes": {
+        "agents": {
+          "resource_count": 2,
+          "services_started": 99,
+          "entities_processed": 99,
+          "total_busy_resource_time": 194.16313802862388,
+          "resource_utilization": 0.40450653755963306,
+          "average_service_time": 1.9612438184709482,
+          "average_waiting_time": 0.4310047416717856,
+          "maximum_waiting_time": 4.086218609290976
+        },
+        "waiting": {
+          "total_arrivals": 35,
+          "total_exited": 35,
+          "rejected_entities": 0,
+          "average_waiting_time": 4.632181168802273,
+          "maximum_waiting_time": 19.802258737443434,
+          "average_queue_length": 0.6755264204503315,
+          "maximum_queue_length": 4,
+          "waiting_at_end": 0
+        },
+        "specialist": {
+          "resource_count": 2,
+          "services_started": 35,
+          "entities_processed": 33,
+          "total_busy_resource_time": 340.268855454641,
+          "resource_utilization": 0.7088934488638354,
+          "average_service_time": 10.0486069507838,
+          "average_waiting_time": 4.632181168802273,
+          "maximum_waiting_time": 19.802258737443434
+        }
+      }
+    },
+    "alternative": {
+      "milliseconds": 2.24,
+      "summary": {
+        "total_generated": 99,
+        "total_completed": 99,
+        "total_rejected": 0,
+        "in_system_at_end": 0,
+        "completion_rate": 1.0,
+        "average_cycle_time": 5.359876764162171,
+        "maximum_cycle_time": 41.22034431736718,
+        "average_waiting_time": 1.9020440693144958,
+        "maximum_waiting_time": 29.992163049947138,
+        "throughput": 24.75
+      },
+      "bottleneck": "specialist",
+      "nodes": {
+        "agents": {
+          "resource_count": 2,
+          "services_started": 99,
+          "entities_processed": 99,
+          "total_busy_resource_time": 194.95933885614411,
+          "resource_utilization": 0.40616528928363355,
+          "average_service_time": 1.9692862510721627,
+          "average_waiting_time": 0.43856917447867805,
+          "maximum_waiting_time": 3.77714956477851
+        },
+        "waiting": {
+          "total_arrivals": 15,
+          "total_exited": 15,
+          "rejected_entities": 0,
+          "average_waiting_time": 9.658934305916398,
+          "maximum_waiting_time": 29.992163049947138,
+          "average_queue_length": 0.6036833941197749,
+          "maximum_queue_length": 4,
+          "waiting_at_end": 0
+        },
+        "specialist": {
+          "resource_count": 1,
+          "services_started": 15,
+          "entities_processed": 15,
+          "total_busy_resource_time": 147.3660979337757,
+          "resource_utilization": 0.6140254080573988,
+          "average_service_time": 9.824406528918379,
+          "average_waiting_time": 9.658934305916398,
+          "maximum_waiting_time": 29.992163049947138
+        }
+      }
+    },
+    "optimization": {
+      "resources": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "runs": 9,
+      "candidates": [
+        {
+          "resources": 1,
+          "status": "infeasible",
+          "mean": 15.859998117289036
+        },
+        {
+          "resources": 2,
+          "status": "feasible",
+          "mean": 1.7705952682255839
+        },
+        {
+          "resources": 3,
+          "status": "feasible",
+          "mean": 0.3764246079141046
+        }
+      ]
+    }
+  },
+  "hospital": {
+    "baseline": {
+      "milliseconds": 1.66,
+      "summary": {
+        "total_generated": 57,
+        "total_completed": 39,
+        "total_rejected": 0,
+        "in_system_at_end": 18,
+        "completion_rate": 0.6842105263157895,
+        "average_cycle_time": 55.31074887236548,
+        "maximum_cycle_time": 82.40736737864091,
+        "average_waiting_time": 40.51545924790977,
+        "maximum_waiting_time": 65.66746151309806,
+        "throughput": 9.75
+      },
+      "bottleneck": "doctor",
+      "nodes": {
+        "registration": {
+          "resource_count": 1,
+          "services_started": 57,
+          "entities_processed": 56,
+          "total_busy_resource_time": 169.39550513634276,
+          "resource_utilization": 0.7058146047347615,
+          "average_service_time": 2.9808199479109967,
+          "average_waiting_time": 4.550596975998613,
+          "maximum_waiting_time": 18.810657374495268
+        },
+        "waiting": {
+          "total_arrivals": 56,
+          "total_exited": 41,
+          "rejected_entities": 0,
+          "average_waiting_time": 36.478491835739405,
+          "maximum_waiting_time": 61.770402644458386,
+          "average_queue_length": 8.128806827236433,
+          "maximum_queue_length": 16,
+          "waiting_at_end": 15
+        },
+        "doctor": {
+          "resource_count": 2,
+          "services_started": 41,
+          "entities_processed": 39,
+          "total_busy_resource_time": 471.19783157669247,
+          "resource_utilization": 0.9816621491181093,
+          "average_service_time": 11.81392034439668,
+          "average_waiting_time": 36.478491835739405,
+          "maximum_waiting_time": 61.770402644458386
+        }
+      }
+    },
+    "add-one": {
+      "milliseconds": 1.86,
+      "summary": {
+        "total_generated": 57,
+        "total_completed": 52,
+        "total_rejected": 0,
+        "in_system_at_end": 5,
+        "completion_rate": 0.9122807017543859,
+        "average_cycle_time": 23.236510535255757,
+        "maximum_cycle_time": 46.298773472496464,
+        "average_waiting_time": 8.360632984902667,
+        "maximum_waiting_time": 33.1823502158942,
+        "throughput": 13.0
+      },
+      "bottleneck": "registration",
+      "nodes": {
+        "registration": {
+          "resource_count": 1,
+          "services_started": 57,
+          "entities_processed": 56,
+          "total_busy_resource_time": 169.13581029117432,
+          "resource_utilization": 0.7047325428798931,
+          "average_service_time": 2.9761825399615596,
+          "average_waiting_time": 4.330342123523608,
+          "maximum_waiting_time": 19.37814728756268
+        },
+        "waiting": {
+          "total_arrivals": 56,
+          "total_exited": 55,
+          "rejected_entities": 0,
+          "average_waiting_time": 3.7280079589643744,
+          "maximum_waiting_time": 13.80420292833152,
+          "average_queue_length": 0.8793970271748447,
+          "maximum_queue_length": 4,
+          "waiting_at_end": 1
+        },
+        "doctor": {
+          "resource_count": 3,
+          "services_started": 55,
+          "entities_processed": 52,
+          "total_busy_resource_time": 636.8259349986512,
+          "resource_utilization": 0.8844804652759044,
+          "average_service_time": 11.883503294553163,
+          "average_waiting_time": 3.7280079589643744,
+          "maximum_waiting_time": 13.80420292833152
+        }
+      }
+    },
+    "alternative": {
+      "milliseconds": 1.56,
+      "summary": {
+        "total_generated": 57,
+        "total_completed": 38,
+        "total_rejected": 0,
+        "in_system_at_end": 19,
+        "completion_rate": 0.6666666666666666,
+        "average_cycle_time": 55.22234668479697,
+        "maximum_cycle_time": 83.56068107458256,
+        "average_waiting_time": 40.35294522691229,
+        "maximum_waiting_time": 66.90962723225462,
+        "throughput": 9.5
+      },
+      "bottleneck": "doctor",
+      "nodes": {
+        "registration": {
+          "resource_count": 2,
+          "services_started": 57,
+          "entities_processed": 56,
+          "total_busy_resource_time": 166.30269502090846,
+          "resource_utilization": 0.34646394796022595,
+          "average_service_time": 2.9255911958496696,
+          "average_waiting_time": 0.6070209071120644,
+          "maximum_waiting_time": 4.334634090864313
+        },
+        "waiting": {
+          "total_arrivals": 56,
+          "total_exited": 40,
+          "rejected_entities": 0,
+          "average_waiting_time": 40.531003789772726,
+          "maximum_waiting_time": 66.90962723225462,
+          "average_queue_length": 9.12050714370444,
+          "maximum_queue_length": 16,
+          "waiting_at_end": 16
+        },
+        "doctor": {
+          "resource_count": 2,
+          "services_started": 40,
+          "entities_processed": 38,
+          "total_busy_resource_time": 474.2729256881514,
+          "resource_utilization": 0.9880685951836488,
+          "average_service_time": 11.974428959274684,
+          "average_waiting_time": 40.531003789772726,
+          "maximum_waiting_time": 66.90962723225462
+        }
+      }
+    },
+    "optimization": {
+      "resources": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "runs": 9,
+      "candidates": [
+        {
+          "resources": 2,
+          "status": "infeasible",
+          "mean": 26.382728196322127
+        },
+        {
+          "resources": 3,
+          "status": "feasible",
+          "mean": 6.453980677909135
+        },
+        {
+          "resources": 4,
+          "status": "feasible",
+          "mean": 3.203233893573677
+        }
+      ]
+    }
+  },
+  "restaurant": {
+    "baseline": {
+      "milliseconds": 2.68,
+      "summary": {
+        "total_generated": 99,
+        "total_completed": 61,
+        "total_rejected": 0,
+        "in_system_at_end": 38,
+        "completion_rate": 0.6161616161616161,
+        "average_cycle_time": 60.25739721885272,
+        "maximum_cycle_time": 110.12492837677947,
+        "average_waiting_time": 55.39083355281691,
+        "maximum_waiting_time": 104.80365042699925,
+        "throughput": 15.25
+      },
+      "bottleneck": "kitchen",
+      "nodes": {
+        "ordering": {
+          "resource_count": 1,
+          "services_started": 99,
+          "entities_processed": 99,
+          "total_busy_resource_time": 100.32482653013611,
+          "resource_utilization": 0.41802011054223376,
+          "average_service_time": 1.0133820861629912,
+          "average_waiting_time": 0.5929450934546748,
+          "maximum_waiting_time": 4.22178023641283
+        },
+        "waiting": {
+          "total_arrivals": 99,
+          "total_exited": 62,
+          "rejected_entities": 0,
+          "average_waiting_time": 55.34893751284755,
+          "maximum_waiting_time": 104.80365042699925,
+          "average_queue_length": 21.474661273138928,
+          "maximum_queue_length": 38,
+          "waiting_at_end": 37
+        },
+        "kitchen": {
+          "resource_count": 1,
+          "services_started": 62,
+          "entities_processed": 61,
+          "total_busy_resource_time": 238.99519857849845,
+          "resource_utilization": 0.9958133274104102,
+          "average_service_time": 3.8742510371115695,
+          "average_waiting_time": 55.34893751284755,
+          "maximum_waiting_time": 104.80365042699925
+        }
+      }
+    },
+    "add-one": {
+      "milliseconds": 3.0,
+      "summary": {
+        "total_generated": 99,
+        "total_completed": 96,
+        "total_rejected": 0,
+        "in_system_at_end": 3,
+        "completion_rate": 0.9696969696969697,
+        "average_cycle_time": 7.943371364932179,
+        "maximum_cycle_time": 19.089710902265146,
+        "average_waiting_time": 2.991566098483423,
+        "maximum_waiting_time": 14.404980826493809,
+        "throughput": 24.0
+      },
+      "bottleneck": "kitchen",
+      "nodes": {
+        "ordering": {
+          "resource_count": 1,
+          "services_started": 99,
+          "entities_processed": 99,
+          "total_busy_resource_time": 98.41904043286061,
+          "resource_utilization": 0.41007933513691924,
+          "average_service_time": 0.9941317215440466,
+          "average_waiting_time": 0.5876426467184097,
+          "maximum_waiting_time": 4.8606669936779365
+        },
+        "waiting": {
+          "total_arrivals": 99,
+          "total_exited": 98,
+          "rejected_entities": 0,
+          "average_waiting_time": 2.4723449645789444,
+          "maximum_waiting_time": 10.912290761394239,
+          "average_queue_length": 1.0262433722403244,
+          "maximum_queue_length": 6,
+          "waiting_at_end": 1
+        },
+        "kitchen": {
+          "resource_count": 2,
+          "services_started": 98,
+          "entities_processed": 96,
+          "total_busy_resource_time": 385.08417212470397,
+          "resource_utilization": 0.8022586919264666,
+          "average_service_time": 3.9619048979093794,
+          "average_waiting_time": 2.4723449645789444,
+          "maximum_waiting_time": 10.912290761394239
+        }
+      }
+    },
+    "alternative": {
+      "milliseconds": 3.76,
+      "summary": {
+        "total_generated": 99,
+        "total_completed": 61,
+        "total_rejected": 0,
+        "in_system_at_end": 38,
+        "completion_rate": 0.6161616161616161,
+        "average_cycle_time": 59.112469461605045,
+        "maximum_cycle_time": 110.00292548454,
+        "average_waiting_time": 54.209775179345925,
+        "maximum_waiting_time": 105.34285393465281,
+        "throughput": 15.25
+      },
+      "bottleneck": "kitchen",
+      "nodes": {
+        "ordering": {
+          "resource_count": 2,
+          "services_started": 99,
+          "entities_processed": 99,
+          "total_busy_resource_time": 100.11154961224315,
+          "resource_utilization": 0.2085657283588399,
+          "average_service_time": 1.011227773861042,
+          "average_waiting_time": 0.05262595082148549,
+          "maximum_waiting_time": 0.8685305410305926
+        },
+        "waiting": {
+          "total_arrivals": 99,
+          "total_exited": 62,
+          "rejected_entities": 0,
+          "average_waiting_time": 54.87604335911184,
+          "maximum_waiting_time": 105.34285393465281,
+          "average_queue_length": 21.40682049463641,
+          "maximum_queue_length": 38,
+          "waiting_at_end": 37
+        },
+        "kitchen": {
+          "resource_count": 1,
+          "services_started": 62,
+          "entities_processed": 61,
+          "total_busy_resource_time": 239.14126426557718,
+          "resource_utilization": 0.9964219344399049,
+          "average_service_time": 3.881243722944125,
+          "average_waiting_time": 54.87604335911184,
+          "maximum_waiting_time": 105.34285393465281
+        }
+      }
+    },
+    "optimization": {
+      "resources": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "runs": 9,
+      "candidates": [
+        {
+          "resources": 1,
+          "status": "infeasible",
+          "mean": 48.79549223334274
+        },
+        {
+          "resources": 2,
+          "status": "feasible",
+          "mean": 2.7366603172348825
+        },
+        {
+          "resources": 3,
+          "status": "feasible",
+          "mean": 0.6542131868756603
+        }
+      ]
+    }
+  },
+  "warehouse": {
+    "baseline": {
+      "milliseconds": 2.36,
+      "summary": {
+        "total_generated": 80,
+        "total_completed": 47,
+        "total_rejected": 0,
+        "in_system_at_end": 33,
+        "completion_rate": 0.5875,
+        "average_cycle_time": 70.46313513798303,
+        "maximum_cycle_time": 118.60516741147094,
+        "average_waiting_time": 59.545542511930336,
+        "maximum_waiting_time": 107.3653747833711,
+        "throughput": 11.75
+      },
+      "bottleneck": "packing",
+      "nodes": {
+        "picking": {
+          "resource_count": 2,
+          "services_started": 80,
+          "entities_processed": 79,
+          "total_busy_resource_time": 319.88317432755946,
+          "resource_utilization": 0.6664232798490822,
+          "average_service_time": 3.9998024724316252,
+          "average_waiting_time": 1.9684995930497924,
+          "maximum_waiting_time": 12.252737153762538
+        },
+        "waiting": {
+          "total_arrivals": 79,
+          "total_exited": 49,
+          "rejected_entities": 0,
+          "average_waiting_time": 58.62232224921946,
+          "maximum_waiting_time": 110.14515061620784,
+          "average_queue_length": 19.939310592397312,
+          "maximum_queue_length": 32,
+          "waiting_at_end": 30
+        },
+        "packing": {
+          "resource_count": 1,
+          "services_started": 49,
+          "entities_processed": 48,
+          "total_busy_resource_time": 236.56291215890414,
+          "resource_utilization": 0.9856788006621006,
+          "average_service_time": 4.918437038969967,
+          "average_waiting_time": 58.62232224921946,
+          "maximum_waiting_time": 110.14515061620784
+        }
+      }
+    },
+    "add-one": {
+      "milliseconds": 2.75,
+      "summary": {
+        "total_generated": 80,
+        "total_completed": 79,
+        "total_rejected": 0,
+        "in_system_at_end": 1,
+        "completion_rate": 0.9875,
+        "average_cycle_time": 15.02077153102484,
+        "maximum_cycle_time": 30.730177642577953,
+        "average_waiting_time": 4.083358749150351,
+        "maximum_waiting_time": 19.683952631814474,
+        "throughput": 19.75
+      },
+      "bottleneck": "picking",
+      "nodes": {
+        "picking": {
+          "resource_count": 2,
+          "services_started": 80,
+          "entities_processed": 80,
+          "total_busy_resource_time": 322.14272288987894,
+          "resource_utilization": 0.6711306726872478,
+          "average_service_time": 4.026784036123486,
+          "average_waiting_time": 2.121724862365525,
+          "maximum_waiting_time": 12.95072820807805
+        },
+        "waiting": {
+          "total_arrivals": 80,
+          "total_exited": 80,
+          "rejected_entities": 0,
+          "average_waiting_time": 1.9105919024204467,
+          "maximum_waiting_time": 7.116874631100728,
+          "average_queue_length": 0.6368639674734824,
+          "maximum_queue_length": 3,
+          "waiting_at_end": 0
+        },
+        "packing": {
+          "resource_count": 2,
+          "services_started": 80,
+          "entities_processed": 79,
+          "total_busy_resource_time": 387.811665883667,
+          "resource_utilization": 0.8079409705909729,
+          "average_service_time": 4.90725721057885,
+          "average_waiting_time": 1.9105919024204467,
+          "maximum_waiting_time": 7.116874631100728
+        }
+      }
+    },
+    "alternative": {
+      "milliseconds": 2.26,
+      "summary": {
+        "total_generated": 80,
+        "total_completed": 46,
+        "total_rejected": 0,
+        "in_system_at_end": 34,
+        "completion_rate": 0.575,
+        "average_cycle_time": 72.23874619424132,
+        "maximum_cycle_time": 123.64611995921257,
+        "average_waiting_time": 61.275783141502515,
+        "maximum_waiting_time": 113.57308902909543,
+        "throughput": 11.5
+      },
+      "bottleneck": "packing",
+      "nodes": {
+        "picking": {
+          "resource_count": 3,
+          "services_started": 80,
+          "entities_processed": 79,
+          "total_busy_resource_time": 314.8422217798178,
+          "resource_utilization": 0.43728086358308027,
+          "average_service_time": 3.935992946510845,
+          "average_waiting_time": 0.5520396161607208,
+          "maximum_waiting_time": 6.220184699995841
+        },
+        "waiting": {
+          "total_arrivals": 79,
+          "total_exited": 48,
+          "rejected_entities": 0,
+          "average_waiting_time": 62.50218312830211,
+          "maximum_waiting_time": 113.57308902909543,
+          "average_queue_length": 20.980876828649592,
+          "maximum_queue_length": 33,
+          "waiting_at_end": 31
+        },
+        "packing": {
+          "resource_count": 1,
+          "services_started": 48,
+          "entities_processed": 47,
+          "total_busy_resource_time": 236.56291215890414,
+          "resource_utilization": 0.9856788006621006,
+          "average_service_time": 5.012333375659355,
+          "average_waiting_time": 62.50218312830211,
+          "maximum_waiting_time": 113.57308902909543
+        }
+      }
+    },
+    "optimization": {
+      "resources": 2,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "runs": 9,
+      "candidates": [
+        {
+          "resources": 1,
+          "status": "infeasible",
+          "mean": 50.88674714311623
+        },
+        {
+          "resources": 2,
+          "status": "feasible",
+          "mean": 4.466734341669154
+        },
+        {
+          "resources": 3,
+          "status": "feasible",
+          "mean": 1.6171908751408368
+        }
+      ]
+    }
+  }
+}

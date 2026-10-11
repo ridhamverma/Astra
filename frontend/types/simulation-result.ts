@@ -56,6 +56,7 @@ export interface SimulationTimeSeries {
 }
 
 export interface SimulationRun {
+  is_scenario?: boolean;
   bottleneck_analysis: import("./bottlenecks").BottleneckAnalysis;
   scenario_id: string | null;
   id: string;

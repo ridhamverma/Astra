@@ -1,14 +1,24 @@
-import { memo, type CSSProperties } from "react";
-import { Handle, Position, type NodeProps } from "@xyflow/react";
+import { IsometricStation } from "./isometric-station";
+import { memo, useEffect, type CSSProperties } from "react";
+import { Handle, Position, type NodeProps, useViewport, useUpdateNodeInternals } from "@xyflow/react";
 import { Icon } from "@/components/dashboard/icon";
 import { NODE_DEFINITIONS, type EditorNode } from "@/lib/simulation-editor";
 
 export const AstraNode = memo(function AstraNode({
+  id,
   data,
   type,
   selected,
 }: NodeProps<EditorNode>) {
   const definition = NODE_DEFINITIONS[type];
+  const { zoom } = useViewport();
+  const updateNodeInternals = useUpdateNodeInternals();
+  useEffect(() => {
+    // Loading presentation data changes port IDs and positions. Refresh the
+    // measured handles even if React Flow has already measured this node.
+    const frame = requestAnimationFrame(() => updateNodeInternals(id));
+    return () => cancelAnimationFrame(frame);
+  }, [id, type, data.builderPresentation, updateNodeInternals]);
   if (!data.builderPresentation)
     return (
       <div
@@ -49,6 +59,10 @@ export const AstraNode = memo(function AstraNode({
     );
   return (
     <div
+      style={{ "--scene-zoom": zoom } as CSSProperties}
+      data-compact={zoom < .55}
+      data-overview={zoom < .35}
+      title={data.name}
       data-kind={type}
       className={`astra-node glass ${selected ? "astra-node-selected" : ""} ${data.running ? "is-running" : ""}`}
     >
@@ -61,6 +75,7 @@ export const AstraNode = memo(function AstraNode({
           title="Input"
         />
       )}
+      <IsometricStation kind={type} resources={"resource_count" in data.config ? data.config.resource_count : 1} />
       <div className="astra-node-top">
         <div className="astra-node-icon" aria-hidden="true">
           <Icon name={definition.icon} style={{ width: 20, height: 20 }} />
@@ -119,7 +134,7 @@ export const AstraNode = memo(function AstraNode({
             id="yes"
             type="source"
             position={Position.Right}
-            style={{ top: "35%" }}
+            style={{ top: 122 }}
             className="astra-handle"
             title="Yes branch"
             aria-label="Yes branch"
@@ -128,7 +143,7 @@ export const AstraNode = memo(function AstraNode({
             id="no"
             type="source"
             position={Position.Right}
-            style={{ top: "65%" }}
+            style={{ top: 162 }}
             className="astra-handle"
             title="No branch"
             aria-label="No branch"

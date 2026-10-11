@@ -1,0 +1,37 @@
+/* Playback-only design contract. UI accent remains Astra's coral; operational states do not. */
+.astra-playback, .astra-builder-screen[data-view="playback"] {
+  --scene-font-body: var(--font-sans, "DM Sans"), system-ui, sans-serif;
+  --text-muted: var(--scene-secondary);
+  --scene-gap: 8px; --scene-space-xs: 4px; --scene-space-sm: 8px; --scene-space-md: 12px; --scene-space-lg: 20px;
+  --scene-radius: 12px; --scene-radius-sm: 6px; --scene-control: 44px;
+  --scene-station-width: 248px; --scene-station-height: 264px; --scene-space-node: 14px; --scene-space-panel: 16px; --scene-space-footer: 10px; --scene-stat-width: 144px; --scene-readout-width: 224px; --scene-log-width: 300px; --scene-radius-node: 14px; --scene-title-mobile: 20px;
+  --scene-type-xs: 10px; --scene-type-sm: 11px; --scene-type: 12px; --scene-title: 24px;
+  --scene-waiting: #ebbf66; --scene-service: #83bfef; --scene-transfer: #bfabe9; --scene-rejected: #ffa8a0; --scene-completed: #8fdbb0;
+  --scene-text: #fff9f0; --scene-secondary: #c4bdb2; --scene-border: #827d73; --scene-surface: #171715; --scene-track: #827d73;
+}
+html .astra-builder-screen[data-view="playback"] .astra-playback { color: var(--scene-secondary); font-family: var(--scene-font-body); }
+html .astra-builder-screen[data-view="playback"] .astra-playback :is(.playback-station,.playback-inspector,.playback-event-log,.playback-edge-label,.playback-legend) { color: var(--scene-secondary); background: var(--scene-surface); border-color: var(--scene-border); }
+html .astra-builder-screen[data-view="playback"] .astra-playback :is(.station-name,.station-metrics dd,.playback-readout strong,.playback-inspector strong,.playback-event-log strong) { color: var(--scene-text); }
+html .astra-builder-screen[data-view="playback"] .astra-playback :is(button,select,summary) { color: var(--scene-text); background: var(--scene-surface); border: 1px solid var(--scene-border); border-radius: var(--scene-radius); min-width: var(--scene-control); min-height: var(--scene-control); font-size: var(--scene-type); font-family: var(--scene-font-body); }
+html .astra-builder-screen[data-view="playback"] .astra-playback .astra-button-primary { background: var(--accent); color: #10100e; border-color: var(--accent); min-width: 80px; }
+html .astra-builder-screen[data-view="playback"] .astra-playback button:disabled { opacity: 1; color: #b7b0a5; background: #292925; border-color: var(--scene-border); cursor: not-allowed; }
+html .astra-builder-screen[data-view="playback"] .astra-playback :is(button,select,input,summary,[role=button],.event-log-viewport):focus-visible { outline: 2px solid var(--scene-service); outline-offset: 3px; }
+html .astra-builder-screen[data-view="playback"] .astra-playback :is(.workspace-chip,.astra-playback-controls) { color: var(--scene-secondary); border-color: var(--scene-border); }
+html .astra-builder-screen[data-view="playback"] .astra-playback .playback-swatch { background: var(--scene-service); }
+html .astra-builder-screen[data-view="playback"] .astra-playback .playback-swatch.waiting { background: transparent; border-color: var(--scene-waiting); }
+html .astra-builder-screen[data-view="playback"] .astra-playback .playback-swatch.transfer { background: var(--scene-transfer); }
+.timeline-ticks i { background: var(--scene-service); }
+.timeline-ticks i[data-kind="completion"] { background: var(--scene-completed); }
+.timeline-ticks i[data-kind="rejection"] { background: var(--scene-rejected); }
+html .astra-builder-screen[data-view="playback"] .astra-playback input[type="range"] { appearance: none; -webkit-appearance: none; height: var(--scene-control); background: transparent; margin: 0; }
+html .astra-builder-screen[data-view="playback"] .astra-playback input[type="range"]::-webkit-slider-runnable-track { background: var(--scene-track); height: 5px; border-radius: var(--scene-radius-sm); }
+html .astra-builder-screen[data-view="playback"] .astra-playback input[type="range"]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; height: 18px; width: 18px; margin-top: -6px; background: var(--accent); border: 2px solid var(--scene-text); border-radius: 50%; }
+html .astra-builder-screen[data-view="playback"] .astra-playback input[type="range"]::-moz-range-track { background: var(--scene-track); height: 5px; }
+html .astra-builder-screen[data-view="playback"] .astra-playback input[type="range"]::-moz-range-thumb { background: var(--accent); border: 2px solid var(--scene-text); }
+.station-load { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; border-radius: 0 0 var(--scene-radius) var(--scene-radius); overflow: hidden; background: #343430; }
+.station-load i { height: 100%; display: block; background: var(--scene-service); }
+.playback-station[data-kind="queue"] .station-load i { background: var(--scene-waiting); }
+.playback-station[data-active="true"] { box-shadow: 0 0 0 1px var(--scene-service), 0 0 16px #83bfef20; }
+.playback-person .person-status { stroke: var(--scene-service); fill: var(--scene-service); }
+.playback-person[data-state="waiting"] .person-status { stroke: var(--scene-waiting); fill: none; }
+.playback-person[data-state="walking"] .person-status { stroke: var(--scene-transfer); fill: var(--scene-transfer); }

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, ForeignKeyConstraint, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, ForeignKeyConstraint, Integer, String, Text, UniqueConstraint, func, false
 from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -43,6 +43,7 @@ class SimulationModelVersion(Base):
     project_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False)
     graph: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    is_scenario: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default=false())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

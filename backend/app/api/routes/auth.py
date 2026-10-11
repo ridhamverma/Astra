@@ -23,6 +23,10 @@ class Credentials(BaseModel):
     def normalize(cls, value): return str(value).strip().lower()
 class Registration(Credentials):
     display_name: str = Field(min_length=1, max_length=200)
+    @field_validator("display_name", mode="before")
+    @classmethod
+    def normalize_display_name(cls, value):
+        return value.strip() if isinstance(value, str) else value
 class UserRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: UUID

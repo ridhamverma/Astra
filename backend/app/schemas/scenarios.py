@@ -2,9 +2,9 @@
 from datetime import datetime
 from typing import Annotated, Any
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from app.schemas.projects import RunRead
-from app.schemas.simulation import SimulationModel
+from app.schemas.drafts import SimulationDraft
 
 ScenarioName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 
@@ -19,6 +19,7 @@ class ScenarioUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: ScenarioName | None = None
     model: dict[str, Any] | None = None
+    expected_version: int | None = Field(default=None, ge=1)
 
 
 class ScenarioDuplicate(BaseModel):
@@ -31,7 +32,7 @@ class ScenarioRead(BaseModel):
     project_id: UUID
     name: str
     model_version: int
-    model: SimulationModel
+    model: SimulationDraft
     latest_run: RunRead | None
     created_at: datetime
     updated_at: datetime

@@ -1,0 +1,128 @@
+{
+  "id": "template-customer-service",
+  "name": "Customer-service center \u00b7 add one resource",
+  "simulation": {
+    "duration": 240,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Support requests",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 2.5
+      },
+      "position": {
+        "x": 0,
+        "y": 160
+      }
+    },
+    {
+      "id": "agents",
+      "type": "process",
+      "name": "Frontline support",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "uniform",
+        "mean_service_time": 2.0,
+        "minimum_service_time": 1,
+        "maximum_service_time": 3,
+        "cost_per_resource": 1
+      },
+      "position": {
+        "x": 360,
+        "y": 160
+      }
+    },
+    {
+      "id": "routing",
+      "type": "decision",
+      "name": "Needs specialist?",
+      "config": {
+        "routing": "probability"
+      },
+      "position": {
+        "x": 720,
+        "y": 160
+      }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Specialist backlog",
+      "config": {
+        "capacity": null,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 1080,
+        "y": 48
+      }
+    },
+    {
+      "id": "specialist",
+      "type": "process",
+      "name": "Specialist resolution",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "uniform",
+        "mean_service_time": 10.0,
+        "minimum_service_time": 8,
+        "maximum_service_time": 12,
+        "cost_per_resource": 2.5
+      },
+      "position": {
+        "x": 1440,
+        "y": 48
+      }
+    },
+    {
+      "id": "resolved",
+      "type": "sink",
+      "name": "Requests resolved",
+      "config": {},
+      "position": {
+        "x": 1800,
+        "y": 160
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-agents",
+      "source": "arrivals",
+      "target": "agents"
+    },
+    {
+      "id": "e-agents-routing",
+      "source": "agents",
+      "target": "routing"
+    },
+    {
+      "id": "e-routing-waiting",
+      "source": "routing",
+      "target": "waiting",
+      "probability": 0.35,
+      "sourceHandle": "yes"
+    },
+    {
+      "id": "e-routing-resolved",
+      "source": "routing",
+      "target": "resolved",
+      "probability": 0.65,
+      "sourceHandle": "no"
+    },
+    {
+      "id": "e-waiting-specialist",
+      "source": "waiting",
+      "target": "specialist"
+    },
+    {
+      "id": "e-specialist-resolved",
+      "source": "specialist",
+      "target": "resolved"
+    }
+  ]
+}

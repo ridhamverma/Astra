@@ -1,0 +1,102 @@
+{
+  "id": "template-restaurant",
+  "name": "Restaurant",
+  "simulation": {
+    "duration": 240,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Order arrivals",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 2.5
+      },
+      "position": {
+        "x": 0,
+        "y": 160
+      }
+    },
+    {
+      "id": "ordering",
+      "type": "process",
+      "name": "Take order",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 1.0,
+        "minimum_service_time": 0.5,
+        "maximum_service_time": 1.5,
+        "cost_per_resource": 1
+      },
+      "position": {
+        "x": 360,
+        "y": 160
+      }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Kitchen tickets",
+      "config": {
+        "capacity": null,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 720,
+        "y": 160
+      }
+    },
+    {
+      "id": "kitchen",
+      "type": "process",
+      "name": "Prepare order",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 4.0,
+        "minimum_service_time": 3,
+        "maximum_service_time": 5,
+        "cost_per_resource": 2
+      },
+      "position": {
+        "x": 1080,
+        "y": 160
+      }
+    },
+    {
+      "id": "pickup",
+      "type": "sink",
+      "name": "Orders collected",
+      "config": {},
+      "position": {
+        "x": 1440,
+        "y": 160
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-ordering",
+      "source": "arrivals",
+      "target": "ordering"
+    },
+    {
+      "id": "e-ordering-waiting",
+      "source": "ordering",
+      "target": "waiting"
+    },
+    {
+      "id": "e-waiting-kitchen",
+      "source": "waiting",
+      "target": "kitchen"
+    },
+    {
+      "id": "e-kitchen-pickup",
+      "source": "kitchen",
+      "target": "pickup"
+    }
+  ]
+}

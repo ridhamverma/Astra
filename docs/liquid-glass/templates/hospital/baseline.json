@@ -1,0 +1,102 @@
+{
+  "id": "template-hospital",
+  "name": "Hospital",
+  "simulation": {
+    "duration": 240,
+    "seed": 42
+  },
+  "nodes": [
+    {
+      "id": "arrivals",
+      "type": "source",
+      "name": "Patient arrivals",
+      "config": {
+        "distribution": "exponential",
+        "mean_interarrival_time": 5
+      },
+      "position": {
+        "x": 0,
+        "y": 160
+      }
+    },
+    {
+      "id": "registration",
+      "type": "process",
+      "name": "Registration",
+      "config": {
+        "resource_count": 1,
+        "service_distribution": "uniform",
+        "mean_service_time": 3.0,
+        "minimum_service_time": 2,
+        "maximum_service_time": 4,
+        "cost_per_resource": 1
+      },
+      "position": {
+        "x": 360,
+        "y": 160
+      }
+    },
+    {
+      "id": "waiting",
+      "type": "queue",
+      "name": "Doctor waiting room",
+      "config": {
+        "capacity": null,
+        "discipline": "fifo"
+      },
+      "position": {
+        "x": 720,
+        "y": 160
+      }
+    },
+    {
+      "id": "doctor",
+      "type": "process",
+      "name": "Doctor consultation",
+      "config": {
+        "resource_count": 2,
+        "service_distribution": "uniform",
+        "mean_service_time": 12.0,
+        "minimum_service_time": 10,
+        "maximum_service_time": 14,
+        "cost_per_resource": 3
+      },
+      "position": {
+        "x": 1080,
+        "y": 160
+      }
+    },
+    {
+      "id": "discharge",
+      "type": "sink",
+      "name": "Patients discharged",
+      "config": {},
+      "position": {
+        "x": 1440,
+        "y": 160
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-arrivals-registration",
+      "source": "arrivals",
+      "target": "registration"
+    },
+    {
+      "id": "e-registration-waiting",
+      "source": "registration",
+      "target": "waiting"
+    },
+    {
+      "id": "e-waiting-doctor",
+      "source": "waiting",
+      "target": "doctor"
+    },
+    {
+      "id": "e-doctor-discharge",
+      "source": "doctor",
+      "target": "discharge"
+    }
+  ]
+}

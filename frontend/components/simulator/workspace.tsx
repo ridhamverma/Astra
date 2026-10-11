@@ -6,10 +6,18 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type DragEvent,
 } from "react";
 import Link from "next/link";
-import { CanvasGrid, CanvasZoomControls } from "./canvas-ui";
+import { cn } from "@/lib/utils";
+import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
+import { projectModelPosition, unprojectModelPosition } from "@/lib/isometric";
+import { KeyboardConnection } from "@/components/design/keyboard-connection";
+import { IsometricStation } from "./isometric-station";
+import { IsometricConnection } from "./isometric-connection";
+import "./operations-floor.css";
+import { CanvasZoomControls } from "./canvas-ui";
 import { WorkspaceShell, WorkspaceStatusBar } from "./workspace-shell";
 import { Hand, MousePointer2 } from "lucide-react";
 import {
@@ -96,6 +104,8 @@ const DEFAULT_SIMULATION: SimulationModel["simulation"] = {
   seed: 42,
 };
 const BUILDER_FIT = { padding: 0.15, minZoom: 0.08, maxZoom: 1.25 };
+// Covers the inspector's existing 240 ms delayed fit plus the next animation frame.
+const DRAG_FIT_SETTLE_MS = 300;
 
 function Pencil() {
   return (
@@ -115,32 +125,42 @@ function Pencil() {
     </svg>
   );
 }
-function LockIcon() {
-  return (
-    <svg
-      className="builder-tab-lock"
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="4" y="10" width="16" height="11" rx="2" />
-      <path d="M8 10V7a4 4 0 1 1 8 0v3" />
-    </svg>
-  );
-}
 
 function AstraConceptMark() {
   return <span className="builder-astra-mark" role="img" aria-label="Astra" />;
 }
 
+function subscribeToReducedMotion(onChange: () => void) {
+  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+function getReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function updateBlockOverflow(panel: HTMLElement) {
+  panel.dataset.scrolled = String(panel.scrollTop > 1);
+  panel.dataset.overflow = String(panel.scrollTop + panel.clientHeight < panel.scrollHeight - 1);
+}
+
+// A top-layer tooltip stays visible outside the sidebar's scroll container.
+function showBlockTooltip(button: HTMLButtonElement) {
+  const tip = button.querySelector<HTMLElement>(".builder-tool-tip[popover]");
+  if (!tip) return;
+  const bounds = button.getBoundingClientRect();
+  tip.style.left = `${bounds.right + 8}px`;
+  tip.style.top = `${bounds.top + bounds.height / 2}px`;
+  tip.showPopover();
+}
+function hideBlockTooltip(button: HTMLButtonElement) {
+  const tip = button.querySelector<HTMLElement>(".builder-tool-tip:popover-open");
+  tip?.hidePopover();
+}
+
 function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
   const router = useRouter();
+  const reducedMotion = useSyncExternalStore(subscribeToReducedMotion, getReducedMotion, () => true);
   const flow = useReactFlow<EditorNode, EditorEdge>();
   const canvasRef = useRef<HTMLDivElement>(null);
   const [panMode, setPanMode] = useState(false);
@@ -166,6 +186,12 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
   const history = useRef<
     { nodes: EditorNode[]; edges: EditorEdge[]; dirty: boolean }[]
   >([]);
+  const nodeDrag = useRef<{
+    snapshot: { nodes: EditorNode[]; edges: EditorEdge[]; dirty: boolean };
+    cancelled: boolean;
+  } | null>(null);
+  const [dragInspectorId, setDragInspectorId] = useState<string | null | undefined>(undefined);
+  const lastDragStop = useRef(-Infinity);
   const previousGraph = useRef<{
     key: string;
     dirty: boolean;
@@ -195,7 +221,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
   const [chatGenerating, setChatGenerating] = useState(false);
   const [selectedTool, setSelectedTool] = useState<NodeKind | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [toolPaletteExpanded, setToolPaletteExpanded] = useState(false);
+  const [toolPaletteExpanded, setToolPaletteExpanded] = useState(true);
   const [toolPalettePreferenceLoaded, setToolPalettePreferenceLoaded] =
     useState(false);
   const [toolRailCompact, setToolRailCompact] = useState(false);
@@ -306,8 +332,10 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
   }
 
   const fitBuilderView = useCallback(
-    (duration?: number) => {
+    (duration?: number, automatic = false) => {
+      if ((nodeDrag.current && !nodeDrag.current.cancelled) || (automatic && performance.now() - lastDragStop.current < DRAG_FIT_SETTLE_MS)) return;
       requestAnimationFrame(() => {
+        if ((nodeDrag.current && !nodeDrag.current.cancelled) || (automatic && performance.now() - lastDragStop.current < DRAG_FIT_SETTLE_MS)) return;
         const canvas = canvasRef.current;
         const currentNodes = flow.getNodes();
         if (!canvas || !currentNodes.length || !canvas.clientWidth) return;
@@ -346,7 +374,18 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
     let height = canvas.clientHeight;
     let frame = 0;
     if (typeof ResizeObserver === "undefined") return;
+    const toolbar = canvas.querySelector<HTMLElement>(".builder-controls");
+    const blockPanel = canvas.querySelector<HTMLElement>(".builder-tool-palette");
     const observer = new ResizeObserver(() => {
+      if (blockPanel) updateBlockOverflow(blockPanel);
+      if (toolbar) {
+        const material = getComputedStyle(toolbar);
+        canvas.style.setProperty("--builder-panel-radius", material.borderRadius);
+        canvas.style.setProperty("--builder-panel-surface", material.backgroundColor);
+        canvas.style.setProperty("--builder-panel-border", material.borderColor);
+        const reserved = canvas.getBoundingClientRect().bottom - toolbar.getBoundingClientRect().top + 24;
+        canvas.style.setProperty("--builder-panel-bottom", `${Math.ceil(reserved)}px`);
+      }
       const nextWidth = canvas.clientWidth;
       const nextHeight = canvas.clientHeight;
       const compact = window.innerWidth < 1280;
@@ -357,10 +396,12 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
       height = nextHeight;
       if (nodes.length) {
         cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(() => fitBuilderView(120));
+        frame = requestAnimationFrame(() => fitBuilderView(120, true));
       }
     });
     observer.observe(canvas);
+    if (toolbar) observer.observe(toolbar);
+    if (blockPanel) observer.observe(blockPanel);
     return () => {
       observer.disconnect();
       cancelAnimationFrame(frame);
@@ -372,7 +413,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
     previousChatOpen.current = chatOpen;
     const timeout = window.setTimeout(() => {
       if (canvasRef.current?.clientWidth && canvasRef.current.clientHeight)
-        fitBuilderView(200);
+        fitBuilderView(200, true);
     }, 200);
     return () => window.clearTimeout(timeout);
   }, [chatOpen, flow, fitBuilderView]);
@@ -424,7 +465,16 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
 
   const onNodesChange = useCallback(
     (changes: NodeChange<EditorNode>[]) => {
-      onNodesChangeBase(changes);
+      if (nodeDrag.current?.cancelled) {
+        const stopped = changes.some(change => change.type === "position" && change.dragging === false);
+        changes = changes.filter(change => change.type !== "position");
+        if (stopped) {
+          nodeDrag.current = null;
+          lastDragStop.current = performance.now();
+          setDragInspectorId(undefined);
+        }
+      }
+      onNodesChangeBase(changes.map(change => change.type === "position" && change.position ? { ...change, position: unprojectModelPosition(change.position) } : change));
       if (
         changes.some(
           (change) => change.type !== "select" && change.type !== "dimensions",
@@ -533,7 +583,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
 
   const addNode = useCallback(
     (kind: NodeKind, clientX?: number, clientY?: number) => {
-      if (busy) return;
+      if (busy || loading) return;
       const bounds = canvasRef.current?.getBoundingClientRect();
       if (!bounds) return;
       const point =
@@ -543,12 +593,12 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
               y: bounds.top + bounds.height / 2,
             }
           : { x: clientX, y: clientY };
-      const position = flow.screenToFlowPosition(point);
+      const position = unprojectModelPosition(flow.screenToFlowPosition(point));
       setNodes((current) => [...current, createNode(kind, position)]);
       setDirty(true);
       setError("");
     },
-    [flow, setNodes, busy, setDirty],
+    [flow, setNodes, busy, loading, setDirty],
   );
 
   const onDrop = useCallback(
@@ -557,11 +607,65 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
       const kind = event.dataTransfer.getData(
         "application/astra-node",
       ) as NodeKind;
-      if (NODE_KINDS.includes(kind))
+      if (NODE_KINDS.includes(kind) && isBuilderDropTarget(event.clientX, event.clientY)) {
         addNode(kind, event.clientX, event.clientY);
+        setSelectedTool(null);
+      }
     },
     [addNode],
   );
+  function isBuilderDropTarget(clientX: number, clientY: number) {
+    const canvas = canvasRef.current;
+    const target = canvas?.ownerDocument.elementFromPoint(clientX, clientY);
+    return Boolean(canvas && target && canvas.contains(target) && target.closest(".react-flow, .astra-empty-canvas") && !target.closest(".react-flow__panel, button, input, a"));
+  }
+
+  const cancelNodeDrag = useCallback(() => {
+    const drag = nodeDrag.current;
+    if (!drag || drag.cancelled) return;
+    drag.cancelled = true;
+    lastDragStop.current = performance.now();
+    setDragInspectorId(undefined);
+    restoring.current = true;
+    setNodes(drag.snapshot.nodes);
+    setEdges(drag.snapshot.edges);
+    setDirty(drag.snapshot.dirty);
+    const index = history.current.indexOf(drag.snapshot);
+    if (index >= 0) history.current.splice(index, 1);
+  }, [setNodes, setEdges]);
+
+  useEffect(() => {
+    window.addEventListener("blur", cancelNodeDrag);
+    return () => window.removeEventListener("blur", cancelNodeDrag);
+  }, [cancelNodeDrag]);
+
+  function beginNodeDrag() {
+    const snapshot = { nodes, edges, dirty };
+    nodeDrag.current = { snapshot, cancelled: false };
+    // Keep the original canvas bounds for React Flow's edge auto-pan calculation.
+    setDragInspectorId(nodes.find(node => node.selected)?.id ?? null);
+    // Interrupt an earlier fit animation before the next pointer update.
+    void flow.setViewport(flow.getViewport(), { duration: 0 });
+    history.current.push(snapshot);
+  }
+
+  function finishNodeDrag() {
+    const drag = nodeDrag.current;
+    nodeDrag.current = null;
+    lastDragStop.current = performance.now();
+    setDragInspectorId(undefined);
+    if (!drag || drag.cancelled) return;
+    const moved = flow.getNodes().some(node => {
+      const before = drag.snapshot.nodes.find(item => item.id === node.id);
+      const position = unprojectModelPosition(node.position);
+      return before && Math.hypot(position.x - before.position.x, position.y - before.position.y) > 1e-6;
+    });
+    if (!moved) {
+      const index = history.current.indexOf(drag.snapshot);
+      if (index >= 0) history.current.splice(index, 1);
+      setDirty(drag.snapshot.dirty);
+    } else if (history.current.length > 50) history.current.shift();
+  }
 
   const save = useCallback(
     async (preparedModel?: SimulationModel): Promise<string | null> => {
@@ -701,6 +805,13 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
     loading,
     setBusy,
     setScenarioRevision,
+    setActiveView,
+    setRunStage,
+    setValidationIssues,
+    setError,
+    setRunResult,
+    setPlaybackRun,
+    setMessage,
   ]);
 
   function updateSelectedNode(patch: { name?: string; config?: ConfigPatch }) {
@@ -883,6 +994,8 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
     () =>
       nodes.map((node) => ({
         ...node,
+        ariaLabel: `${node.data.name}, ${node.type} station`,
+        position: projectModelPosition(node.position),
         data: nodePresentation.get(node.id) ?? node.data,
       })),
     [nodes, nodePresentation],
@@ -903,28 +1016,28 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
     () =>
       edges.map((edge) => {
         const decision =
-          nodes.find((node) => node.id === edge.source)?.type === "decision";
+          presentationNodes.find((node) => node.id === edge.source)?.type === "decision";
         const metric = resultMatchesCanvas
           ? runResult?.node_metrics[edge.source]
           : undefined;
         const timelineCount =
           resultMatchesCanvas && playbackRun?.id === runResult?.id
-            ? nodes.find((node) => node.id === edge.source)?.type === "source"
+            ? presentationNodes.find((node) => node.id === edge.source)?.type === "source"
               ? eventCounts.get(edge.source)?.created
               : eventCounts.get(edge.source)?.exited
             : undefined;
-        const sourceNode = nodes.find((node) => node.id === edge.source);
+        const sourceNode = presentationNodes.find((node) => node.id === edge.source);
         const compactCount =
           resultMatchesCanvas &&
           runResult &&
           sourceNode?.type === "source" &&
-          nodes.filter((node) => node.type === "source").length === 1
+          presentationNodes.filter((node) => node.type === "source").length === 1
             ? runResult.summary.total_generated
             : resultMatchesCanvas &&
                 runResult &&
-                nodes.find((node) => node.id === edge.target)?.type ===
+                presentationNodes.find((node) => node.id === edge.target)?.type ===
                   "sink" &&
-                nodes.filter((node) => node.type === "sink").length === 1 &&
+                presentationNodes.filter((node) => node.type === "sink").length === 1 &&
                 edges.filter((item) => item.target === edge.target).length === 1
               ? runResult.summary.total_completed
               : undefined;
@@ -960,7 +1073,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
       }),
     [
       edges,
-      nodes,
+      presentationNodes,
       runResult,
       resultMatchesCanvas,
       runStage,
@@ -978,7 +1091,9 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
     fitBuilderView(300);
   }
 
-  const selectedNode = nodes.find((node) => node.selected);
+  const selectedNode = dragInspectorId === undefined
+    ? nodes.find((node) => node.selected)
+    : nodes.find((node) => node.id === dragInspectorId);
   const selectedEdge = edges.find((edge) => edge.selected);
   const counts = useMemo(
     () => ({ nodes: nodes.length, edges: edges.length }),
@@ -1045,13 +1160,13 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
     Boolean(!chatOpen && (selectedNode || selectedEdge || settingsOpen)),
   );
   useEffect(() => {
-    if (activeView === "builder") {
-      const timer = window.setTimeout(() => fitBuilderView(200), 240);
+    if (activeView === "builder" && (!nodeDrag.current || nodeDrag.current.cancelled)) {
+      const timer = window.setTimeout(() => fitBuilderView(200, true), 240);
       return () => clearTimeout(timer);
     }
   }, [panelOpen, effectiveToolPaletteExpanded, activeView, fitBuilderView]);
   useEffect(() => {
-    const resize = () => fitBuilderView(120);
+    const resize = () => fitBuilderView(120, true);
     window.addEventListener("orientationchange", resize);
     return () => window.removeEventListener("orientationchange", resize);
   }, [fitBuilderView]);
@@ -1159,12 +1274,26 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
       ],
       group: "Go to",
       icon: "arrow" as const,
-      disabled: view === "playback" && !playbackRun,
       action: () => setActiveView(view),
     })),
   ];
   useEffect(() => {
     function onKey(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape" && touchTool.current?.dragging) {
+        event.preventDefault();
+        window.clearTimeout(toolPressTimer.current);
+        touchTool.current = null;
+        toolDragged.current = true;
+        canvasRef.current?.querySelectorAll(".builder-node-tool.is-dragging").forEach(tool => tool.classList.remove("is-dragging"));
+        setToolTip(null);
+        setSelectedTool(null);
+        return;
+      }
+      if (event.key === "Escape" && nodeDrag.current) {
+        event.preventDefault();
+        cancelNodeDrag();
+        return;
+      }
       const typing =
         event.target instanceof HTMLElement &&
         (event.target.isContentEditable ||
@@ -1365,33 +1494,10 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
               ref={activeView === "playback" ? activeTabRef : null}
               tabIndex={activeView === "playback" ? 0 : -1}
               aria-label="Playback"
-              aria-describedby={
-                !playbackRun ? "builder-playback-lock-tip" : undefined
-              }
               aria-selected={activeView === "playback"}
-              aria-disabled={!playbackRun}
-              onClick={() => {
-                if (playbackRun) setActiveView("playback");
-              }}
-              title={
-                !playbackRun ? "Run a simulation to unlock Playback" : undefined
-              }
+              onClick={() => setActiveView("playback")}
             >
-              {!playbackRun ? (
-                <>
-                  <span>Playback</span>
-                  <LockIcon />
-                  <span
-                    id="builder-playback-lock-tip"
-                    className="builder-tab-tooltip"
-                    role="tooltip"
-                  >
-                    Run a simulation to unlock Playback
-                  </span>
-                </>
-              ) : (
-                "Playback"
-              )}
+              Playback
             </button>
             <button
               role="tab"
@@ -1667,11 +1773,28 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                 ref={canvasRef}
                 className="astra-canvas"
                 onDrop={onDrop}
+                onPointerCancel={cancelNodeDrag}
                 onDragOver={(event) => {
-                  event.preventDefault();
-                  event.dataTransfer.dropEffect = "move";
+                  if (isBuilderDropTarget(event.clientX, event.clientY)) {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                  } else event.dataTransfer.dropEffect = "none";
                 }}
               >
+                <div className="builder-grid-background absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true">
+                  <AnimatedGridPattern
+                    numSquares={reducedMotion === false ? 30 : 0}
+                    maxOpacity={0.1}
+                    duration={3}
+                    repeatDelay={1}
+                    className={cn(
+                      "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
+                      "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+                      "builder-animated-grid",
+                    )}
+                  />
+                </div>
+                <div className="absolute inset-0 z-10">
                 <div
                   className={`builder-left-rail react-flow__panel ${effectiveToolPaletteExpanded ? "is-expanded" : "is-collapsed"}`}
                 >
@@ -1679,6 +1802,11 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                     <aside
                       className={`builder-tool-palette glass ${effectiveToolPaletteExpanded ? "is-expanded" : "is-collapsed"}`}
                       aria-label="Node tools"
+                      style={{ overscrollBehaviorY: "contain" }}
+                      onScroll={(event) => {
+                        updateBlockOverflow(event.currentTarget);
+                        event.currentTarget.querySelectorAll<HTMLElement>(".builder-tool-tip:popover-open").forEach(tip => tip.hidePopover());
+                      }}
                     >
                       <div className="builder-tools-heading">
                         <div>
@@ -1727,10 +1855,17 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                             tabIndex={
                               toolFocus === NODE_KINDS.indexOf(kind) ? 0 : -1
                             }
-                            onFocus={() =>
-                              setToolFocus(NODE_KINDS.indexOf(kind))
-                            }
+                            onFocus={(event) => {
+                              setToolFocus(NODE_KINDS.indexOf(kind));
+                              if (!effectiveToolPaletteExpanded) showBlockTooltip(event.currentTarget);
+                            }}
+                            onBlur={(event) => hideBlockTooltip(event.currentTarget)}
+                            onMouseEnter={(event) => {
+                              if (!effectiveToolPaletteExpanded) showBlockTooltip(event.currentTarget);
+                            }}
+                            onMouseLeave={(event) => hideBlockTooltip(event.currentTarget)}
                             draggable
+                            style={{ touchAction: "pan-y" }}
                             onDragStart={(event) => {
                               event.currentTarget.classList.add("is-dragging");
                               event.dataTransfer.setData(
@@ -1815,6 +1950,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                                 ) > 12
                               ) {
                                 touch.dragging = true;
+                                event.preventDefault();
                                 toolDragged.current = true;
                                 window.clearTimeout(toolPressTimer.current);
                                 setToolTip(null);
@@ -1829,15 +1965,9 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                                 "is-dragging",
                               );
                               const touch = touchTool.current;
-                              const bounds =
-                                canvasRef.current?.getBoundingClientRect();
                               if (
                                 touch?.dragging &&
-                                bounds &&
-                                event.clientX >= bounds.left &&
-                                event.clientX <= bounds.right &&
-                                event.clientY >= bounds.top &&
-                                event.clientY < bounds.bottom - 60
+                                isBuilderDropTarget(event.clientX, event.clientY)
                               ) {
                                 addNode(
                                   touch.kind,
@@ -1864,10 +1994,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                               className="builder-tool-symbol"
                               aria-hidden="true"
                             >
-                              <Icon
-                                name={item.icon}
-                                style={{ width: 20, height: 20 }}
-                              />
+                              <IsometricStation kind={kind} />
                             </span>
                             <span className="builder-tool-name">
                               {item.label}
@@ -1875,6 +2002,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                             <span
                               id={`builder-tool-tip-${kind}`}
                               className="builder-tool-tip"
+                              popover={effectiveToolPaletteExpanded ? undefined : "manual"}
                               role="tooltip"
                             >
                               {item.label} <kbd>{TOOL_KEYS[kind]}</kbd>
@@ -1894,14 +2022,15 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                   edges={canvasEdges}
                   nodeTypes={nodeTypes}
                   edgeTypes={edgeTypes}
-                  onNodeDragStart={() => {
-                    history.current.push({ nodes, edges, dirty });
-                    if (history.current.length > 50) history.current.shift();
-                  }}
+                  onNodeDragStart={beginNodeDrag}
+                  onNodeDragStop={finishNodeDrag}
+                  onSelectionDragStart={beginNodeDrag}
+                  onSelectionDragStop={finishNodeDrag}
                   onNodesChange={onNodesChange}
                   onEdgesChange={onEdgesChange}
                   onConnect={connect}
                   connectionLineType={ConnectionLineType.SmoothStep}
+                  connectionLineComponent={IsometricConnection}
                   connectionLineStyle={{
                     stroke: "var(--accent)",
                     strokeWidth: 2,
@@ -1964,9 +2093,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                       color: "var(--edge-arrow)",
                     },
                   }}
-                >
-                  <CanvasGrid />
-                </ReactFlow>
+                />
                 <CanvasZoomControls onFit={() => fitBuilderView(200)}>
                   <button
                     aria-label="Select mode"
@@ -1989,7 +2116,8 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                 {nodes.length === 0 && !loading && (
                   <div className="astra-empty-canvas">
                     <p>
-                      Start with a Source, or describe your process to Astra
+                      Build your simulation: place blocks, configure each station,
+                      connect your routes, then Run.
                     </p>
                     <div>
                       <button
@@ -2027,6 +2155,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                     </button>
                   </p>
                 )}
+                </div>
               </div>
             </section>
 
@@ -2151,6 +2280,13 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                                   `nodes.${nodes.indexOf(selectedNode)}.`,
                                 ) || issue.path.includes(selectedNode.id),
                             )}
+                          />
+                          <KeyboardConnection
+                            key={`connect-${selectedNode.id}`}
+                            source={selectedNode}
+                            nodes={nodes}
+                            disabled={busy}
+                            onConnect={connect}
                           />
                         </>
                       )}
@@ -2403,11 +2539,16 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
             }}
           />
         </div>
-        {playbackRun && (
+        {(playbackRun || activeView === "playback") && (
           <SimulationPlayback
-            key={playbackRun.id}
+            key={playbackRun?.id ?? "empty"}
             run={playbackRun}
             visible={activeView === "playback"}
+            loading={loading || ["validating", "saving", "running"].includes(runStage)}
+            error={runStage === "error" ? error : undefined}
+            onRetry={() => void run()}
+            onCreate={() => setActiveView("builder")}
+            stale={Boolean(playbackRun) && !resultMatchesCanvas}
           />
         )}
         {activeView === "analytics" && runResult && (

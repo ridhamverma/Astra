@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from app.api.schemas import ApiIssue, ErrorCode
 from app.schemas.simulation import ProcessNode, SimulationModel, SourceNode
+from app.schemas.drafts import SimulationDraft
 from app.simulation import CyclicModelError, UnsupportedModelError, validate_executable_model
 from app.simulation.engine import MAX_ENTITIES_PER_RUN
 
@@ -52,7 +53,7 @@ def _from_pydantic(error: ValidationError) -> ApiProblem:
     return ApiProblem(category, "Simulation model validation failed", issues, 400 if category == "unsupported_input" else 422)
 
 
-def validate_request_payload(payload: Any) -> SimulationModel:
+def validate_request_payload(payload: Any, *, draft: bool = False) -> SimulationModel:
     """Validate input shape, model, execution graph, and API run limits."""
     if not isinstance(payload, dict):
         raise ApiProblem(
@@ -70,7 +71,7 @@ def validate_request_payload(payload: Any) -> SimulationModel:
         raise _limit("edges", f"At most {MAX_EDGES} edges are allowed")
 
     try:
-        model = validate_executable_model(payload)
+        model = SimulationDraft.model_validate(payload) if draft else validate_executable_model(payload)
     except ValidationError as error:
         raise _from_pydantic(error) from None
     except (CyclicModelError, UnsupportedModelError) as error:
@@ -84,3 +85,7 @@ def validate_request_payload(payload: Any) -> SimulationModel:
         if isinstance(node, SourceNode) and node.config.max_entities is not None and node.config.max_entities > MAX_ENTITIES_PER_RUN:
             raise _limit(f"nodes.{index}.config.max_entities", f"Source entity count must not exceed {MAX_ENTITIES_PER_RUN}")
     return model
+
+
+def validate_draft_payload(payload: Any) -> SimulationDraft:
+    return validate_request_payload(payload, draft=True)

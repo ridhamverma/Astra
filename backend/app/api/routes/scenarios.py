@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 from app.api.routes.projects import _execute_run, _not_found, _project, _run_read, _save_model
-from app.api.simulation_validation import ApiProblem, validate_request_payload
+from app.api.simulation_validation import ApiProblem, validate_draft_payload
 from app.api.auth import get_current_user
 from app.database.session import get_db
 from app.models import Scenario, SimulationModelVersion, SimulationRun, Project, User
@@ -59,9 +59,9 @@ def list_scenarios(project_id: UUID, db: Session = Depends(get_db), user: User =
 
 @router.post("/projects/{project_id}/scenarios", response_model=ScenarioRead, status_code=201)
 def create_scenario(project_id: UUID, payload: ScenarioCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    model = validate_request_payload(payload.model)
+    model = validate_draft_payload(payload.model)
     project = _project(db, project_id, user.id, lock=True)
-    version = _save_model(db, project, model)
+    version = _save_model(db, project, model, is_scenario=True)
     scenario = Scenario(project_id=project_id, name=payload.name, version=version.version)
     db.add(scenario)
     db.commit()
@@ -77,12 +77,14 @@ def get_scenario(scenario_id: UUID, db: Session = Depends(get_db), user: User = 
 def update_scenario(scenario_id: UUID, payload: ScenarioUpdate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     if any(getattr(payload, field) is None for field in payload.model_fields_set):
         raise ApiProblem("invalid_configuration", "Scenario name and model cannot be null", [])
-    model = validate_request_payload(payload.model) if payload.model is not None else None
+    model = validate_draft_payload(payload.model) if payload.model is not None else None
     scenario, project = _locked_scenario(db, scenario_id, user.id)
+    if payload.expected_version is not None and payload.expected_version != scenario.version:
+        raise ApiProblem("conflict", "This scenario was changed in another session. Reload it before saving.", [], status_code=409)
     if payload.name is not None:
         scenario.name = payload.name
     if model is not None and model.model_dump(mode="json") != _version(db, scenario).graph:
-        scenario.version = _save_model(db, project, model).version
+        scenario.version = _save_model(db, project, model, is_scenario=True).version
     db.commit()
     return _read(db, scenario)
 

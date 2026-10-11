@@ -1,20 +1,24 @@
 """Project storage and compact run-history API shapes."""
 
 from datetime import datetime
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from app.schemas.drafts import SimulationDraft
 
 from app.schemas.simulation import SimulationModel
 from app.schemas.bottlenecks import BottleneckAnalysis
 from app.simulation.results import ProcessMetrics, QueueMetrics, SimulationSummary, SimulationTimeSeries, SimulationEvent
 
 
+ProjectName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+
+
 class ProjectCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    name: str = Field(min_length=1, max_length=200)
+    name: ProjectName
     description: str | None = Field(default=None, max_length=10000)
     model: dict[str, Any] | None = None
 
@@ -22,7 +26,8 @@ class ProjectCreate(BaseModel):
 class ProjectUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    name: str | None = Field(default=None, min_length=1, max_length=200)
+    name: ProjectName | None = None
+    expected_version: int | None = Field(default=None, ge=0)
     description: str | None = Field(default=None, max_length=10000)
     model: dict[str, Any] | None = None
 
@@ -39,11 +44,11 @@ class ProjectSummary(BaseModel):
     run_count: int = 0
     last_run_at: datetime | None = None
     status: str = "needs_review"
-    model: SimulationModel | None = None
+    model: SimulationDraft | None = None
 
 
 class ProjectDetail(ProjectSummary):
-    model: SimulationModel | None
+    model: SimulationDraft | None
 
 
 class RunCreate(BaseModel):
@@ -54,6 +59,7 @@ class RunCreate(BaseModel):
 
 
 class RunRead(BaseModel):
+    is_scenario: bool = False
     scenario_id: UUID | None = None
     id: UUID
     project_id: UUID

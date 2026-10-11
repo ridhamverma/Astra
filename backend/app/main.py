@@ -51,11 +51,16 @@ def create_app() -> FastAPI:
 
     @app.exception_handler(RequestValidationError)
     async def handle_bad_request(request: Request, error: RequestValidationError) -> JSONResponse:
+        details = error.errors()
+        malformed = any(detail["type"] == "json_invalid" for detail in details)
         response = ApiErrorResponse(
             error=ApiErrorBody(
-                code="unsupported_input",
-                message="Request body must contain valid JSON",
-                details=[ApiIssue(code="unsupported_input", path="body", message="Invalid or missing JSON body")],
+                code="unsupported_input" if malformed else "invalid_configuration",
+                message="Request body must contain valid JSON" if malformed else "Request validation failed",
+                details=[ApiIssue(code="unsupported_input", path="body", message="Invalid or missing JSON body")] if malformed else [
+                    ApiIssue(code="invalid_configuration", path=".".join(str(part) for part in detail["loc"]) or "body", message=detail["msg"])
+                    for detail in details[:20]
+                ],
             )
         )
         return JSONResponse(status_code=400, content=response.model_dump())
