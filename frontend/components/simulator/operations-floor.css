@@ -9,6 +9,14 @@ html .astra-builder-screen.astra-builder-screen.astra-builder-screen .astra-canv
   inset: 0;
   pointer-events: none;
 }
+/* Visual-only flag: set to block to restore both grids. Snapping is independent. */
+html .astra-builder-screen:is([data-view="builder"], [data-view="playback"]) {
+  --canvas-grid-display: none;
+}
+html .astra-builder-screen[data-view="builder"] .builder-animated-grid,
+html .astra-builder-screen[data-view="playback"] .operations-grid {
+  display: var(--canvas-grid-display);
+}
 html .astra-builder-screen.astra-builder-screen.astra-builder-screen :is(.astra-node[data-kind], .playback-station) {
   position: relative;
   display: block;
