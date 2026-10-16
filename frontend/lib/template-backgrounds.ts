@@ -21,8 +21,8 @@ export const templateBackgrounds: Record<BackgroundId, TemplateBackgroundConfig>
   "customer-service": { src: customerService, overlayStrength: .6 },
 };
 export const backgroundTreatment = {
-  builder: { blur: 2.5, overlayMultiplier: 1 },
-  playback: { blur: 1.5, overlayMultiplier: .75 },
+  builder: { blur: 1.5, overlayMultiplier: 1 },
+  playback: { blur: 0.9, overlayMultiplier: .75 },
   centerDarkening: .5,
   fadeMs: 300,
 };
