@@ -11,7 +11,7 @@ import { PlaybackEdge, PlaybackPaths, PlaybackPeople } from "./playback-scene";
 import "./playback-scene.css";
 import "./playback-tokens.css";
 import "./operations-floor.css";
-import { IsometricStation } from "./isometric-station";
+import { PlaybackSpeed } from "./playback-speed";
 import { projectModelPosition } from "@/lib/isometric";
 import { PLAYBACK_DESIGN } from "@/lib/playback-design";
 import { CanvasGrid, CanvasZoomControls } from "./canvas-ui";
@@ -163,10 +163,6 @@ function PlaybackCanvas({
           <PlaybackPeople run={sceneRun} player={player} theme={theme} selected={selected} onSelect={onSelect} following={following} onStopFollowing={onStopFollowing} clock={clock} reducedMotion={reducedMotion} />
         </ReactFlow></PlaybackPaths>
       )}
-      <details className="playback-blocks" key={phone ? "phone" : "desktop"} open={!phone}>
-        <summary>Blocks</summary><p>Stations in this run · zoom in for details</p>
-        {run.model.nodes.map(node => <div className="floor-block" key={node.id}><IsometricStation kind={node.type} resources={"resource_count" in node.config ? node.config.resource_count : 1} /><span title={node.name}>{node.name}</span></div>)}
-      </details>
       <CanvasZoomControls onFit={fit} />
       </div>
       {selected && <PlaybackInspector run={run} player={player} selected={selected} following={following} onFollow={() => onSelect(selected)} onClose={() => onSelect(null)} />}
@@ -336,32 +332,28 @@ function PlaybackSession({ run, visible, theme, stale }: { run: PlaybackRun; vis
       {stale && <p className="playback-notice" role="status" aria-label="Run status">This run uses model v{run.model_version}. The editor has newer changes; this replay stays tied to its saved snapshot.</p>}
       {!run.events.length && <p className="playback-notice" role="status" aria-label="Run status">This run has no events. There are no entities to replay.</p>}
       <span className="playback-live" aria-live="polite" aria-atomic="true">{announcement}</span>
-      <div ref={controlsRef} className="astra-playback-controls glass">
+      <div ref={controlsRef} className="astra-playback-controls glass" data-reduced-motion={reducedMotion}>
         <PlaybackButtons playing={playing} finished={finished} disabled={!run.events.length} canPrevious={player.index > 0} canNext={player.index < run.events.length} onToggle={toggle} onReset={reset} onStep={step} />
-        <label>
-          Speed
-          <select
-            aria-label="Playback speed"
+        <div className="playback-timeline-zone">
+          <div className="playback-time-heading">
+            <label htmlFor="playback-time">Simulation time</label>
+            <strong data-testid="playback-clock">{player.time.toFixed(2)} <small>/ {run.duration} min</small></strong>
+          </div>
+          <PlaybackTimeline events={run.events} duration={run.duration} time={player.time} index={player.index} playing={playing} onSeek={seek} onDragEnd={resume => { if (resume && player.time < run.duration) setPlaying(true); }} />
+        </div>
+        <div className="playback-meta">
+          <PlaybackSpeed
             value={speed}
             onChange={(event) => setSpeed(Number(event.target.value))}
-          >
-            {[0.5, 1, 2, 4, 8].map((value) => (
-              <option key={value} value={value}>
-                {value}× · {value} min/s
-              </option>
-            ))}
-          </select>
-        </label>
-        <PlaybackTimeline events={run.events} duration={run.duration} time={player.time} index={player.index} playing={playing} onSeek={seek} onDragEnd={resume => { if (resume && player.time < run.duration) setPlaying(true); }} />
-        <div className="playback-readout">
-          <strong data-testid="playback-clock">
-            {player.time.toFixed(2)} / {run.duration} min
-          </strong>
-          <span>
-            {finished ? "Finished" : playing && visible ? "Playing" : player.time === 0 && player.index > 0 ? "Initial state" : "Paused"}{" "}
-            · {player.index.toLocaleString("en-US")} /{" "}
-            {run.events.length.toLocaleString("en-US")} events
-          </span>
+            reducedMotion={reducedMotion}
+          />
+          <div className="playback-readout">
+            <span className="playback-status" data-state={finished ? "finished" : playing && visible ? "playing" : "paused"}>
+              <i aria-hidden="true" />
+              {finished ? "Finished" : playing && visible ? "Playing" : player.time === 0 && player.index > 0 ? "Initial state" : "Paused"}
+            </span>
+            <span className="playback-event-count">{player.index.toLocaleString("en-US")} / {run.events.length.toLocaleString("en-US")} events</span>
+          </div>
         </div>
       </div>
       <div className="astra-playback-summary">

@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { type CSSProperties, useMemo, useRef, useState } from "react";
 import { aggregateEventTicks } from "@/lib/playback-timeline";
 import { eventUpperBound } from "@/lib/playback";
 import type { SimulationEvent } from "@/types/simulation-result";
@@ -15,8 +15,7 @@ export function PlaybackTimeline({ events, duration, time, index, playing, onSee
     const box = event.currentTarget.getBoundingClientRect();
     setHover(Math.max(0, Math.min(duration, (event.clientX - box.left) / box.width * duration)));
   }} onPointerLeave={() => setHover(null)}>
-    <label htmlFor="playback-time">Simulation time</label>
-    <div className="timeline-track">
+    <div className="timeline-track" style={{ "--timeline-progress": `${duration ? time / duration * 100 : 0}%` } as CSSProperties}>
       <input id="playback-time" aria-label="Playback time" type="range" role="slider" min={0} max={duration} step={.001} value={time}
         aria-valuemin={0} aria-valuemax={duration} aria-valuenow={time} aria-valuetext={`${time.toFixed(2)} of ${duration} minutes, event ${index} of ${events.length}`}
         disabled={duration <= 0} onChange={e => onSeek(e.currentTarget.valueAsNumber)}
@@ -25,6 +24,7 @@ export function PlaybackTimeline({ events, duration, time, index, playing, onSee
         onPointerCancel={() => { dragging.current = false; onDragEnd(false); }} />
       <div className="timeline-ticks" aria-hidden="true">{ticks.map((tick,i) => <i key={i} data-kind={tick.kind} style={{ left: `${duration ? tick.time / duration * 100 : 0}%` }} title={`${tick.time.toFixed(2)} min · ${tick.count} ${tick.kind}`} />)}</div>
     </div>
-    {hover !== null && <output className="timeline-tooltip" style={{ left: `${duration ? hover / duration * 100 : 0}%` }}>{hover.toFixed(2)} min · {at ? `${at.entity_id} ${at.type.replaceAll("_", " ")}` : "Start"}</output>}
+    <div className="timeline-endpoints" aria-hidden="true"><span>0</span><span>{duration} min</span></div>
+    {hover !== null && <output className="timeline-tooltip" style={{ left: `${duration ? hover / duration * 100 : 0}%` }}>{hover.toFixed(2)} min<span className="timeline-tooltip-event"> · {at ? `${at.entity_id} ${at.type.replaceAll("_", " ")}` : "Start"}</span></output>}
   </div>;
 }

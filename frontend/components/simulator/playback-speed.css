@@ -1,0 +1,87 @@
+/* Speed control only. The portal inherits Playback's scoped theme tokens via its ref. */
+html .astra-builder-screen[data-view="playback"] .astra-playback .astra-playback-controls .playback-speed {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+}
+.playback-speed-caption, .playback-speed small { color: var(--scene-secondary); }
+.playback-speed small { font-size: 10px; }
+html .astra-builder-screen[data-view="playback"] .astra-playback .astra-playback-controls .playback-speed-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 96px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgb(255 255 255 / .1);
+  border-radius: 12px;
+  background: rgb(255 255 255 / .04);
+  color: var(--scene-text);
+  font-family: var(--scene-font-body);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.playback-speed-trigger > svg, .playback-speed-chevron { color: var(--scene-secondary); }
+.playback-speed-chevron { display: flex; transition: transform 140ms ease; }
+.playback-speed-chevron[data-popup-open] { transform: rotate(180deg); }
+html .astra-builder-screen[data-view="playback"] .astra-playback .astra-playback-controls .playback-speed-trigger:hover { background: rgb(255 255 255 / .06); }
+html .astra-builder-screen[data-view="playback"] .astra-playback .astra-playback-controls .playback-speed-trigger[data-popup-open] { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+html .astra-builder-screen[data-view="playback"] .astra-playback .astra-playback-controls .playback-speed-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.playback-speed-positioner { z-index: 1000; }
+.playback-speed-popup {
+  box-sizing: border-box;
+  min-width: max(140px, var(--anchor-width));
+  max-width: calc(100vw - 16px);
+  max-height: var(--available-height);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid rgb(255 255 255 / .1);
+  border-radius: 14px;
+  background: var(--scene-surface);
+  color: var(--scene-text);
+  font-family: var(--scene-font-body);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 12px 32px rgb(0 0 0 / .5);
+  outline: none;
+  transform-origin: var(--transform-origin);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+.playback-speed-popup:is([data-starting-style], [data-ending-style]) { opacity: 0; transform: translateY(-4px) scale(.98); }
+.playback-speed-popup[data-side="top"]:is([data-starting-style], [data-ending-style]) { transform: translateY(4px) scale(.98); }
+.playback-speed-option {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background 140ms ease;
+}
+.playback-speed-option[data-highlighted] { background: rgb(255 255 255 / .06); }
+.playback-speed-option[data-selected] { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.playback-speed-option[data-selected][data-highlighted] { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent); }
+.playback-speed-option:active { background: rgb(255 255 255 / .1); }
+.playback-speed-option[data-selected]:active { color: color-mix(in srgb, var(--accent) 85%, var(--scene-text)); }
+.playback-speed-check { display: flex; color: var(--accent); }
+@media (max-width: 639px) {
+  .playback-speed-caption, .playback-speed small, .playback-speed-chevron { display: none; }
+  html .astra-builder-screen[data-view="playback"] .astra-playback .astra-playback-controls .playback-speed-trigger { min-width: 64px; padding: 0 8px; gap: 4px; }
+}
+html .astra-builder-screen[data-view="playback"] .astra-playback .astra-playback-controls .playback-speed[data-reduced-motion="true"] .playback-speed-trigger,
+.playback-speed[data-reduced-motion="true"] .playback-speed-chevron,
+.playback-speed-portal[data-reduced-motion="true"] :is(.playback-speed-popup, .playback-speed-option) { transition: none; }
+.playback-speed-portal[data-reduced-motion="true"] .playback-speed-popup { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .playback-speed-chevron, .playback-speed-popup, .playback-speed-option { transition: none; }
+  .playback-speed-popup { transform: none; }
+}
