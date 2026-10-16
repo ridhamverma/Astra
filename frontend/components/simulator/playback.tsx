@@ -12,6 +12,7 @@ import "./playback-scene.css";
 import "./playback-tokens.css";
 import "./operations-floor.css";
 import { PlaybackSpeed } from "./playback-speed";
+import { BackgroundControl, TemplateBackground, useProjectBackground, type ProjectBackground } from "./template-background";
 import { projectModelPosition } from "@/lib/isometric";
 import { PLAYBACK_DESIGN } from "@/lib/playback-design";
 import { CanvasGrid, CanvasZoomControls } from "./canvas-ui";
@@ -49,13 +50,14 @@ function PlaybackCanvas({
   player,
   visible,
   theme,
-  selected, following, onSelect, onStopFollowing, logOpen, onSeek, onLogClose, clock, reducedMotion,
+  selected, following, onSelect, onStopFollowing, logOpen, onSeek, onLogClose, clock, reducedMotion, background,
 }: {
   run: PlaybackRun;
   player: TimelinePlayer;
   visible: boolean;
   theme: PlaybackTheme;
   clock: PlaybackClock; reducedMotion: boolean;
+  background: ProjectBackground;
   selected: string | null; following: boolean; onSelect: (id: string | null) => void; onStopFollowing: () => void; logOpen: boolean; onSeek: (index: number) => void; onLogClose: () => void;
 }) {
   const flow = useReactFlow<EditorNode, EditorEdge>();
@@ -141,6 +143,7 @@ function PlaybackCanvas({
       tabIndex={0}
       onPointerDownCapture={event => { if (event.target instanceof Element && event.target.closest(".builder-controls button")) manuallyZoomed.current = true; }}
     >
+      {visible && <TemplateBackground background={background} view="playback" reducedMotion={reducedMotion} />}
       <div className="playback-graph">{visible && (
         <PlaybackPaths><ReactFlow
           nodes={nodes}
@@ -172,15 +175,18 @@ function PlaybackCanvas({
   );
 }
 
-export function SimulationPlayback({ run, visible, theme = healthcareTheme, loading = false, error, onRetry, onCreate, stale = false }: {
+export function SimulationPlayback({ run, visible, theme = healthcareTheme, loading = false, error, onRetry, onCreate, stale = false, background: projectBackground }: {
   run?: PlaybackRun | null; visible: boolean; theme?: PlaybackTheme; loading?: boolean; error?: string; onRetry?: () => void; onCreate?: () => void; stale?: boolean;
+  background?: ProjectBackground;
 }) {
-  if (!visible) return run ? <PlaybackSession key={run.id} run={run} visible={false} theme={theme} stale={stale} /> : null;
+  const fallbackBackground = useProjectBackground();
+  const background = projectBackground ?? fallbackBackground;
+  if (!visible) return run ? <PlaybackSession key={run.id} run={run} visible={false} theme={theme} stale={stale} background={background} /> : null;
   if (loading || error || !run) return <PlaybackState state={loading ? "loading" : error ? "error" : "empty"} error={error} onRetry={onRetry} onCreate={onCreate} />;
-  return <PlaybackSession key={run.id} run={run} visible theme={theme} stale={stale} />;
+  return <PlaybackSession key={run.id} run={run} visible theme={theme} stale={stale} background={background} />;
 }
 
-function PlaybackSession({ run, visible, theme, stale }: { run: PlaybackRun; visible: boolean; theme: PlaybackTheme; stale: boolean }) {
+function PlaybackSession({ run, visible, theme, stale, background }: { run: PlaybackRun; visible: boolean; theme: PlaybackTheme; stale: boolean; background: ProjectBackground }) {
   const player = useMemo(
     () => { const next = new TimelinePlayer(run.events, run.duration); next.prepareSnapshots(); return next; },
     [run],
@@ -326,7 +332,7 @@ function PlaybackSession({ run, visible, theme, stale }: { run: PlaybackRun; vis
         title="Replay your system"
         description="Follow entities through the last measured simulation run."
         actions={
-          <><span className="workspace-chip">Model v{run.model_version}</span><button className="astra-button-secondary" aria-pressed={!reducedMotion} title={systemMotion ? "System reduced motion is enabled" : "Toggle walking and visual transfers"} onClick={() => setMotion(v => !v)}>{reducedMotion ? "Motion off" : "Motion on"}</button><button className="astra-button-secondary" aria-expanded={logOpen} onClick={() => setLogOpen(v => !v)}>Event log</button></>
+          <><span className="workspace-chip">Model v{run.model_version}</span><button className="astra-button-secondary" aria-pressed={!reducedMotion} title={systemMotion ? "System reduced motion is enabled" : "Toggle walking and visual transfers"} onClick={() => setMotion(v => !v)}>{reducedMotion ? "Motion off" : "Motion on"}</button><BackgroundControl background={background} /><button className="astra-button-secondary" aria-expanded={logOpen} onClick={() => setLogOpen(v => !v)}>Event log</button></>
         }
       />
       {stale && <p className="playback-notice" role="status" aria-label="Run status">This run uses model v{run.model_version}. The editor has newer changes; this replay stays tied to its saved snapshot.</p>}
@@ -369,7 +375,7 @@ function PlaybackSession({ run, visible, theme, stale }: { run: PlaybackRun; vis
         ))}
       </div>
       <ReactFlowProvider>
-        <PlaybackCanvas run={run} player={player} visible={visible} theme={theme} selected={selected} following={following} onSelect={id => { if (id === selected && id !== null) setFollowing(v => !v); else { setSelected(id); setFollowing(false); } }} onStopFollowing={() => setFollowing(false)} logOpen={logOpen} onSeek={seekEvent} onLogClose={() => setLogOpen(false)} clock={clock} reducedMotion={reducedMotion} />
+        <PlaybackCanvas run={run} player={player} visible={visible} theme={theme} selected={selected} following={following} onSelect={id => { if (id === selected && id !== null) setFollowing(v => !v); else { setSelected(id); setFollowing(false); } }} onStopFollowing={() => setFollowing(false)} logOpen={logOpen} onSeek={seekEvent} onLogClose={() => setLogOpen(false)} clock={clock} reducedMotion={reducedMotion} background={background} />
       </ReactFlowProvider>
 
     </section>

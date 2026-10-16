@@ -18,6 +18,7 @@ import { IsometricStation } from "./isometric-station";
 import { IsometricConnection } from "./isometric-connection";
 import "./operations-floor.css";
 import { CanvasZoomControls } from "./canvas-ui";
+import { BackgroundControl, TemplateBackground, useProjectBackground } from "./template-background";
 import { WorkspaceShell, WorkspaceStatusBar } from "./workspace-shell";
 import { Hand, MousePointer2 } from "lucide-react";
 import {
@@ -202,6 +203,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
   const [nodes, setNodes, onNodesChangeBase] = useNodesState<EditorNode>([]);
   const [edges, setEdges, onEdgesChangeBase] = useEdgesState<EditorEdge>([]);
   const [projectId, setProjectId] = useState(initialProjectId);
+  const background = useProjectBackground(projectId);
   const [modelVersion, setModelVersion] = useState<number | null>(null);
   const [modelId, setModelId] = useState("");
   const [projectName, setProjectName] = useState("Untitled File");
@@ -1781,6 +1783,8 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
                   } else event.dataTransfer.dropEffect = "none";
                 }}
               >
+                {activeView === "builder" && <TemplateBackground background={background} view="builder" reducedMotion={reducedMotion} />}
+                {activeView === "builder" && <div className="builder-background-control"><BackgroundControl background={background} /></div>}
                 <div className="builder-grid-background absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true">
                   <AnimatedGridPattern
                     numSquares={reducedMotion === false ? 30 : 0}
@@ -2542,6 +2546,7 @@ function WorkspaceCanvas({ initialProjectId }: { initialProjectId?: string }) {
         {(playbackRun || activeView === "playback") && (
           <SimulationPlayback
             key={playbackRun?.id ?? "empty"}
+            background={background}
             run={playbackRun}
             visible={activeView === "playback"}
             loading={loading || ["validating", "saving", "running"].includes(runStage)}

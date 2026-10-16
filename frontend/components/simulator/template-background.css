@@ -1,0 +1,42 @@
+/* Static photo treatment only; graph transforms, grid opacity and hit targets stay owned by the canvas. */
+.template-background { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; z-index: 0; }
+.template-background * { pointer-events: none; }
+.template-background-slot, .template-background-photo, .template-background-image,
+.template-background-overlay, .template-background-vignette { position: absolute; inset: 0; }
+.template-background-photo { opacity: 0; transition: opacity var(--background-fade) ease; }
+.template-background-photo[data-visible="true"] { opacity: 1; }
+@starting-style { .template-background-photo[data-visible="true"] { opacity: 0; } }
+.template-background-image { filter: blur(var(--background-blur)); transform: scale(1.05); }
+.template-background-image img { object-fit: cover; object-position: center; }
+.template-background-placeholder { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.template-background-full { opacity: 0; transition: opacity var(--background-fade) ease; }
+.template-background-full[data-loaded="true"] { opacity: 1; }
+.template-background-overlay { background: var(--bg-chrome, #0f0f0f); opacity: var(--background-overlay); }
+.template-background-vignette { background: radial-gradient(ellipse at center, rgb(0 0 0 / var(--background-center)) 0%, transparent 85%); }
+.builder-background-control { position: absolute; top: 14px; right: 14px; z-index: 20; }
+/* Existing grids remain above the photograph. No grid pattern or opacity override. */
+.astra-canvas:has(> .template-background .template-background-photo) > :is(.builder-grid-background,.playback-graph) { z-index: 1; }
+.astra-canvas:has(> .template-background .template-background-photo[data-visible="true"]) :is(.astra-node-title,.astra-node-type-label,.astra-node-data,.station-heading,.station-name,.station-metrics) {
+  text-shadow: 0 0 2px #080b10, 0 1px 4px #080b10, 0 0 8px #080b10;
+  color: #edf3f5;
+}
+html .astra-builder-screen.astra-builder-screen.astra-builder-screen .astra-canvas:has(> .template-background .template-background-photo[data-visible="true"]) :is(.astra-node-title,.astra-node-type-label,.astra-node-data dt,.astra-node-data dd,.station-heading span,.station-heading small,.station-name,.station-metrics dt,.station-metrics dd) { color: #edf3f5; }
+/* A faint dark backing also bounds contrast over the brightest photo regions. */
+.astra-canvas:has(> .template-background .template-background-photo[data-visible="true"]) :is(.astra-node-title,.astra-node-type-label,.astra-node-data,.station-heading,.station-name,.station-metrics) {
+  background: rgb(8 11 16 / .78);
+  border-radius: 4px;
+  box-shadow: 0 0 6px 3px rgb(8 11 16 / .35);
+}
+html .astra-builder-screen .background-trigger {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 36px; padding: 0 10px; border: 1px solid rgb(255 255 255 / .1);
+  border-radius: 12px; background: var(--scene-surface, var(--bg-card, #121212));
+  color: var(--scene-text, var(--text-primary, #edf3f5)); font: inherit; font-size: 12px; cursor: pointer;
+}
+.background-trigger > svg { color: var(--text-secondary, #95a5b9); }
+.background-trigger[aria-checked="true"] > svg { color: var(--accent, #f06445); }
+html .astra-builder-screen.astra-builder-screen.astra-builder-screen .astra-button-secondary.background-trigger:focus-visible { outline: 2px solid var(--accent, #f06445); outline-offset: 2px; }
+@media(max-width:639px) { .background-trigger > span { display: none; } }
+.template-background[data-reduced-motion="true"] :is(.template-background-photo,.template-background-full),
+html[data-astra-motion="reduce"] :is(.template-background-photo,.template-background-full) { transition: none; }
+@media(prefers-reduced-motion:reduce) { .template-background-photo,.template-background-full { transition: none; } }
